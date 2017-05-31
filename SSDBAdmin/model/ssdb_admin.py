@@ -56,3 +56,21 @@ class SSDBObject(object):
         else:
             # pop_type = 'back
             self.__conn.qpop_back(queue_name, int(number))
+
+    def queue_qrange(self, queue_name, offset, limit):
+        """
+        Return a ``limit`` slice of the queue ``name`` at position ``offset``
+        :param queue_name:
+        :param offset:
+        :param limit:
+        :return:
+        """
+        return self.__conn.qrange(queue_name, int(offset), int(limit))
+
+    def queue_size(self, queue_name):
+        """
+        length of queue
+        :param queue_name:
+        :return:
+        """
+        return self.__conn.qsize(queue_name)

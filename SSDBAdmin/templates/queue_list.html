@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block content %}
     <div class="pull-left">
-        <a class="btn btn-info btn-md" href="/ssdbadmin/queue/qpush">
+        <a class="btn btn-info btn-md" href="{{ url_for('queue_qpush') }}">
             <span class="glyphicon glyphicon-plus"></span> Add
         </a>
     </div>
@@ -38,7 +38,7 @@
         <tbody>
         {% for queue in queue_list %}
             <tr>
-                <td>{{ queue.name }}</td>
+                <td><a href="{{ url_for('queue_qrange', n=queue.name) }}">{{ queue.name }}</a></td>
                 <td>{{ queue.size }}</td>
                 <td>
                     <a class="btn btn-xs btn-info" href="{{ url_for('queue_qpush', n=queue.name) }}" title="Pop Items">
