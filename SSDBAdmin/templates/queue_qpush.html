@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+{% block content %}
+    <h2> Add List type record</h2>
+    <form action="/ssdbadmin/queue/qpush/" method="post">
+        <table class="table table-striped">
+            <thead>
+            <tr class="info">
+                <th width="40%">Queue name</th>
+                <th width="10%">Location</th>
+                <th width="50%">Item</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input type="text" name="queue_name" class="form-control" required></td>
+                <td>
+                    <select name="type">
+                        <option value="back">Back</option>
+                        <option value="front">Front</option>
+                    </select>
+                </td>
+                <td><textarea name="item" class="form-control" required></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+        <div style="text-align: center">
+            <button type="submit" class="btn btn-sm btn-primary">Save &nbsp;</button>
+            <button class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</button>
+        </div>
+
+    </form>
+{% endblock %}

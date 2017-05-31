@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SSDBAdmin</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">SSDBAdmin</a>
+        </div>
+
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li id="kv"><a href="#">kv</a></li>
+                <li id="hash"><a href="#">hash</a></li>
+                <li id="zset"><a href="#">zset</a></li>
+                <li id="queue"><a href="/ssdbadmin/queue/">queue</a></li>
+                <li>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                localhost:8888
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">localhost:8889</a></li>
+                                <li><a href="#">localhost:8887</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="http://ssdb.io/zh_cn/">ssdb.io</a></li>
+                <li><a href="http://ssdb.io/zh_cn/">GitHub</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div><!-- /.container -->
+
+<footer>
+    <!--底部导航-->
+    <div class="foot-nav navbar-fixed-bottom" style="text-align: center; padding: 15px 0">
+        <div class="copy-right center-block"><span>CopyRight &#169; 2015-2016 j_hao104 &#160;&#160;&#160;</span></div>
+    </div>
+</footer>
+
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    /*下拉菜单自动弹出 */
+    $(function () {
+        $(".dropdown").mouseover(function () {
+            $(this).addClass("open");
+        });
+
+        $(".dropdown").mouseleave(function () {
+            $(this).removeClass("open");
+        })
+
+    });
+
+    /* 导航栏active */
+    try {
+        $('li#{{active}}').addClass('active');
+    } catch (err) {
+    }
+</script>
+</body>
+</html>

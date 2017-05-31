@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1> SSDB Admin - 0.1</h1>
+    <hr>
+    <h3>Server Info - kunlun029:8889</h3>
+    <table class="table table-striped">
+        <tbody>
+        <tr>
+            <td width="20%">version</td>
+            <td>1.9.4</td>
+        </tr>
+        <tr>
+            <td width="20%">links</td>
+            <td>198</td>
+        </tr>
+        <tr>
+            <td width="20%">total_calls</td>
+            <td>39355902783</td>
+        </tr>
+        <tr>
+            <td width="20%">dbsize</td>
+            <td>53910533827</td>
+        </tr>
+        <tr>
+            <td width="20%">binlogs</td>
+            <td>capacity : 20000000 min_seq : 48748803546 max_seq : 48768805163</td>
+        </tr>
+        <tr>
+            <td width="20%">serv_key_range</td>
+            <td>kv : "" - "" hash: "" - "" zset: "" - "" list: "" - ""</td>
+        </tr>
+        <tr>
+            <td width="20%">data_key_range</td>
+            <td>kv : "" - "" hash: "raw_proxy" - "sc_used_account_weibo" zset: "machine_install" -"\xe8\xaf\x9a\xe4\xbf\xa1\xe4\xb8\xad\xe5\x9b\xbd_STORAGE" list: "sc_config_schedule_log" -"sc_\xe8\xaf\x9a\xe4\xbf\xa1\xe4\xb8\xad\xe5\x9b\xbd_\xe8\xaf\x9a\xe4\xbf\xa1\xe9\x87\x8d\xe5\xba\x86_PARSE_MIDDLE"
+            </td>
+        </tr>
+        <tr>
+            <td width="20%">leveldb.stats</td>
+            <td>
+                <pre>
+                Compactions
+Level  Files Size(MB) Time(sec) Read(MB) Write(MB)
+--------------------------------------------------
+  0        0        0    461072        0  42812214
+  1        1       38   1123526 68314397  27211231
+  2       39     1261   1194495 30328859  28974834
+  3      431    14406     52687  1396095   1168305
+  4     4184   146260      3888   153111    128572
+                </pre>
+            </td>
+        </tr>
+        <tr>
+            <td width="20%">disk_usage</td>
+            <td>161965 MB</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
