@@ -42,3 +42,17 @@ class SSDBObject(object):
         else:
             # push_type = 'back'
             self.__conn.qpush_back(queue_name, item)
+
+    def queue_qpop(self, queue_name, number, pop_type):
+        """
+        Remove the first or last ``number`` item of the queue ``name``
+        :param queue_name:
+        :param number:
+        :param pop_type:
+        :return:
+        """
+        if pop_type == 'front':
+            self.__conn.qpop_front(queue_name, int(number))
+        else:
+            # pop_type = 'back
+            self.__conn.qpop_back(queue_name, int(number))

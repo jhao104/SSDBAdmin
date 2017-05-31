@@ -43,7 +43,7 @@
                 <td>
                     <a class="btn btn-xs btn-info" href="{{ url_for('queue_qpush', n=queue.name) }}" title="Pop Items">
                         <span class="glyphicon glyphicon-plus"></span></a>
-                    <a class="btn btn-xs btn-info" href="#" title="Pop Items">
+                    <a class="btn btn-xs btn-info" href="{{ url_for('queue_qpop', n=queue.name) }}" title="Pop Items">
                         <span class="glyphicon glyphicon-minus"></span></a>
                     <a class="btn btn-xs btn-danger" href="#" title="Remove Queue">
                         <span class="glyphicon glyphicon-remove"></span></a>
