@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block content %}
     <h2> Add List type record</h2>
-    <form action="/ssdbadmin/queue/qpush/" method="post">
+    <form action="{{ url_for('queue_qpush') }}" method="post">
         <table class="table table-striped">
             <thead>
             <tr class="info">
@@ -12,7 +12,11 @@
             </thead>
             <tbody>
             <tr>
-                <td><input type="text" name="queue_name" class="form-control" required></td>
+                <td><input type="text" name="queue_name" class="form-control"
+                           {% if queue_name %}
+                            value="{{ queue_name }}" readonly
+                           {% endif %}
+                           required></td>
                 <td>
                     <select name="type">
                         <option value="back">Back</option>

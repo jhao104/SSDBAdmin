@@ -16,7 +16,8 @@ def queue_list():
 @app.route('/ssdbadmin/queue/qpush/', methods=['GET', 'POST'])
 def queue_qpush():
     if request.method == 'GET':
-        return render_template('queue_qpush.html')
+        queue_name = request.args.get('n')
+        return render_template('queue_qpush.html', queue_name=queue_name)
     else:
         queue_name = request.form.get('queue_name')
         push_type = request.form.get('type')
