@@ -79,3 +79,12 @@ def queue_qrange():
                                          data_total=item_total))
     resp.set_cookie('SIZE', str(page_size))
     return resp
+
+
+@app.route('/ssdbadmin/queue/qget/')
+def queue_qget():
+    queue_name = request.args.get('n')
+    index = request.args.get('i')
+    ssdb_object = SSDBObject(request)
+    item = ssdb_object.queue_qget(queue_name, index)
+    return render_template('queue_qget.html', name=queue_name, item=item, index=index)

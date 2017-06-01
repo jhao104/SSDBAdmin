@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p><b>List:</b></p>{{ name }}
+    <p><b>Index:</b></p>{{ index }}
+    <p><b>Item({{ item|count }} bytes):</b></p>{{ item }}
+{% endblock %}

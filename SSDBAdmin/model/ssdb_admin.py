@@ -74,3 +74,12 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.qsize(queue_name)
+
+    def queue_qget(self, queue_name, index):
+        """
+        Get the item of ``index`` within the queue_name
+        :param queue_name:
+        :param index:
+        :return:
+        """
+        return self.__conn.qget(queue_name, int(index))
