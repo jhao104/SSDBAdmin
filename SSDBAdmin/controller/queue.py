@@ -27,6 +27,7 @@ def queue_lists():
     queue_list, has_next = ssdb_object.queue_list(start=start, end=end, page_num=page_num, page_size=int(page_size))
     select_arg = {'s': start, 'e': end, 'page_size': int(page_size)}
     resp = make_response(render_template('queue/queue.html', queue_list=queue_list, has_next=has_next,
+                                         has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='queue'))
     return resp
 

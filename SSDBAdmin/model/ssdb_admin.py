@@ -123,5 +123,43 @@ class SSDBObject(object):
         page_count, page_num = get_paging_tabs_info(data_count=len(all_list), page_no=page_num, page_row_num=page_size)
         has_next = True if page_count > page_num else False
         zset_list = map(lambda zset_name: {'name': zset_name, 'size': self.__conn.zsize(zset_name)},
-                         all_list[(page_num - 1) * page_size: page_num * page_size - 1])
+                        all_list[(page_num - 1) * page_size: page_num * page_size - 1])
         return zset_list, has_next
+
+    def zset_zset(self, zset_name, key, score):
+        """
+        Set the score of ``key`` from the zset ``name`` to ``score``
+        :param zset_name:
+        :param key:
+        :param score:
+        :return:
+        """
+        return self.__conn.zset(zset_name, key, score)
+
+    def zset_zsize(self, zset_name):
+        """
+        Return the number of elements in zset
+        :param zset_name:
+        :return:
+        """
+        return self.__conn.zsize(zset_name)
+
+    def zset_zscan(self, zset_name, key, tp, limit):
+        """
+        Return a dict mapping key/score
+        :param zset_name:
+        :param key:
+        :param tp:
+        :param limit:
+        :return:
+        """
+        next = self.__conn.zscan(name=zset_name, key_start=key, score_start='', score_end='', limit=limit + 1)
+        prev = self.__conn.zrscan(name=zset_name, key_start=key, score_start='', score_end='', limit=limit + 1)
+        item_dict = prev if tp == 'prev' else next
+        has_next = False if len(next) <= limit and tp == 'next' else True
+        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        if not tp:
+            has_next = False if len(next) <= limit else True
+            has_prev = False
+        item_list = [{'key': key, 'score': score} for key, score in item_dict.iteritems()]
+        return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
