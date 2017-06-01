@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 from SSDBAdmin import app
 from flask import render_template, request, make_response, redirect, url_for
@@ -68,10 +71,11 @@ def queue_qrange():
     item_list = ssdb_object.queue_qrange(queue_name, offset=offset, limit=page_size)
     resp = make_response(render_template('queue_qrange.html',
                                          item_list=item_list,
-                                         queue_name=queue_name,
+                                         name=queue_name,
                                          page_num=int(page_num),
                                          page_count=page_count,
                                          page_size=int(page_size),
-                                         start_index=offset, ))
+                                         start_index=offset,
+                                         data_total=item_total))
     resp.set_cookie('SIZE', str(page_size))
     return resp
