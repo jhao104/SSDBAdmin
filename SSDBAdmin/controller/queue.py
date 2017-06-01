@@ -14,7 +14,7 @@ from SSDBAdmin.util import get_paging_tabs_info
 @app.route('/ssdbadmin/queue/')
 def queue_lists():
     """
-    return queue list
+    show the list of queue
     :return:
     """
     page_num = int(request.args.get('page_num', 1))
@@ -34,7 +34,7 @@ def queue_lists():
 @app.route('/ssdbadmin/queue/qpush/', methods=['GET', 'POST'])
 def queue_qpush():
     """
-    add item to queue
+    add item to queue(support back and front)
     :return:
     """
     if request.method == 'GET':
@@ -52,7 +52,7 @@ def queue_qpush():
 @app.route('/ssdbadmin/queue/qpop/', methods=['GET', 'POST'])
 def queue_qpop():
     """
-    pop item from queue
+    pop item(s) from queue (support back and front)
     :return:
     """
     if request.method == 'GET':
@@ -69,6 +69,10 @@ def queue_qpop():
 
 @app.route('/ssdbadmin/queue/qrange/')
 def queue_qrange():
+    """
+    show the list of item from queue
+    :return:
+    """
     queue_name = request.args.get('n')
     page_num = request.args.get('page_num', 1)
     page_size = request.args.get('page_size')
@@ -95,8 +99,28 @@ def queue_qrange():
 
 @app.route('/ssdbadmin/queue/qget/')
 def queue_qget():
+    """
+    show an item info from queue
+    :return:
+    """
     queue_name = request.args.get('n')
     index = request.args.get('i')
     ssdb_object = SSDBObject(request)
     item = ssdb_object.queue_qget(queue_name, index)
     return render_template('queue_qget.html', name=queue_name, item=item, index=index, active='queue')
+
+
+@app.route('/ssdbadmin/queue/qclear/', methods=['GET', 'POST'])
+def queue_qclear():
+    """
+    delete  the specified queue data
+    :return:
+    """
+    if request.method == 'POST':
+        queue_name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.queue_qclear(queue_name)
+        return redirect(url_for('queue_lists'))
+    else:
+        queue_name = request.args.get('n')
+        return render_template('queue_qclear.html', name=queue_name, active='queue')

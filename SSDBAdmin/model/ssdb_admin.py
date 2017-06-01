@@ -30,6 +30,14 @@ class SSDBObject(object):
     #         self.limit = 20
 
     def queue_list(self, start, end, page_num, page_size):
+        """
+        return a list of queue info between start and end
+        :param start: The lower bound(not included) of keys to be returned, empty string ``''`` means -inf
+        :param end: The upper bound(included) of keys to be returned, empty string ``''`` means +inf
+        :param page_num:
+        :param page_size:
+        :return:
+        """
         all_list = self.__conn.qlist(name_start=start, name_end=end, limit=(page_num + 1) * page_size)
         page_count, page_num = get_paging_tabs_info(data_count=len(all_list), page_no=page_num, page_row_num=page_size)
         has_next = True if page_count > page_num else False
@@ -38,6 +46,13 @@ class SSDBObject(object):
         return queue_list, has_next
 
     def queue_qpush(self, queue_name, item, push_type):
+        """
+        Push item onto the back(front) of the queue_name
+        :param queue_name:
+        :param item:
+        :param push_type: back or front
+        :return:
+        """
         if push_type == 'front':
             self.__conn.qpush_front(queue_name, item)
         else:
@@ -46,10 +61,10 @@ class SSDBObject(object):
 
     def queue_qpop(self, queue_name, number, pop_type):
         """
-        Remove the first or last ``number`` item of the queue ``name``
+        Remove the first or last number item of the queue_name
         :param queue_name:
-        :param number:
-        :param pop_type:
+        :param number: item number
+        :param pop_type:back or front
         :return:
         """
         if pop_type == 'front':
@@ -84,3 +99,11 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.qget(queue_name, int(index))
+
+    def queue_qclear(self, queue_name):
+        """
+        **Clear&Delete** the queue specified by queue_name`
+        :param queue_name:
+        :return:
+        """
+        return self.__conn.qclear(queue_name)

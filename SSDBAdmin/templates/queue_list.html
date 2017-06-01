@@ -11,10 +11,6 @@
                 <label for="start_name">Start name</label>
                 <input type="text" class="form-control" id="start_name" name="s" value="{{ select_arg.s }}" placeholder="start key name">
             </div>
-{#            <div class="form-group">#}
-{#                <label for="end_name">End name</label>#}
-{#                <input type="text" class="form-control" id="end_name" name="e" value="{{ select_arg.e }}" placeholder="end key name">#}
-{#            </div>#}
             <div class="form-group">
                 {% include 'select_size.html' %}
             </div>
@@ -40,7 +36,7 @@
                         <span class="glyphicon glyphicon-plus"></span></a>
                     <a class="btn btn-xs btn-info" href="{{ url_for('queue_qpop', n=queue.name) }}" title="Pop Items">
                         <span class="glyphicon glyphicon-minus"></span></a>
-                    <a class="btn btn-xs btn-danger" href="#" title="Remove Queue">
+                    <a class="btn btn-xs btn-danger" href="{{ url_for('queue_qclear', n=queue.name) }}" title="Remove Queue">
                         <span class="glyphicon glyphicon-remove"></span></a>
                 </td>
             </tr>
