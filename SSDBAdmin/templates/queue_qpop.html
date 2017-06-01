@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block content %}
     <h3>qpop: <code>{{ queue_name }}</code></h3>
-    <form class="form-inline" style="text-align: center" action="{{ url_for('queue_qpop') }}" method="post">
+    <form class="form-inline center" action="{{ url_for('queue_qpop') }}" method="post">
         <input type="hidden" name="n" value="{{ queue_name }}">
         <div class="form-group">
             <label for="queue_name">Pop</label>

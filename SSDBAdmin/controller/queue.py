@@ -46,7 +46,7 @@ def queue_qpush():
         item = request.form.get('item')
         ssdb_object = SSDBObject(request)
         ssdb_object.queue_qpush(queue_name, item, push_type)
-        return redirect(url_for('queue_lists'))
+        return redirect(url_for('queue_qrange', n=queue_name))
 
 
 @app.route('/ssdbadmin/queue/qpop/', methods=['GET', 'POST'])
@@ -64,7 +64,7 @@ def queue_qpop():
         number = request.form.get('num')
         ssdb_object = SSDBObject(request)
         ssdb_object.queue_qpop(queue_name, number, pop_type)
-        return redirect(url_for('queue_lists'))
+        return redirect(url_for('queue_qrange', n=queue_name))
 
 
 @app.route('/ssdbadmin/queue/qrange/')

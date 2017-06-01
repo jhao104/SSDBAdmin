@@ -1,0 +1,22 @@
+.foot{
+    text-align: center;
+    padding: 15px 0;
+    color: #999;
+    font-size: 90%
+}
+
+.clear{
+    clear: both;
+    height: 10px
+}
+
+.center{
+    text-align: center;
+}
+
+.page_info{
+    height:30px;
+    line-height:30px;
+    width:100px;
+    overflow:hidden;
+}

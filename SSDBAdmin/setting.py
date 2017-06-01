@@ -6,4 +6,3 @@ servers = [
 ]
 
 DEBUG = True
-

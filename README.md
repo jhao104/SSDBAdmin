@@ -10,6 +10,7 @@ SSDB数据库的可视化界面管理工具
 ## 安装
 
 下载项目到本地`git clone https://github.com/jhao104/SSDBAdmin.git`
+
 编辑配置文件`SSDBAdmin/setting.py`:
 ```
 servers = [
