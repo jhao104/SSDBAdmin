@@ -9,19 +9,14 @@
         <form class="form-inline">
             <div class="form-group">
                 <label for="start_name">Start name</label>
-                <input type="text" class="form-control" id="start_name" name="start_name" placeholder="start key name">
+                <input type="text" class="form-control" id="start_name" name="s" value="{{ select_arg.s }}" placeholder="start key name">
             </div>
+{#            <div class="form-group">#}
+{#                <label for="end_name">End name</label>#}
+{#                <input type="text" class="form-control" id="end_name" name="e" value="{{ select_arg.e }}" placeholder="end key name">#}
+{#            </div>#}
             <div class="form-group">
-                <label for="end_name">End name</label>
-                <input type="text" class="form-control" id="end_name" name="end_name" placeholder="end key name">
-            </div>
-            <div class="form-group">
-                <label for="size">Size</label>
-                <select name="size" id="size" class="form-control">
-                    <option value="20"> 20</option>
-                    <option value="50"> 50</option>
-                    <option value="100"> 100</option>
-                </select>
+                {% include 'select_size.html' %}
             </div>
             <button type="submit" class="btn btn-info">Query</button>
         </form>
@@ -54,4 +49,5 @@
         </tbody>
 
     </table>
+    {% include 'pager_tabs.html' %}
 {% endblock %}

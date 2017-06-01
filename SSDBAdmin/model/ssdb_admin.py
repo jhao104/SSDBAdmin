@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from SSDBAdmin.setting import servers
+from SSDBAdmin.util import get_paging_tabs_info
 
 from ssdb.connection import BlockingConnectionPool
 from ssdb import SSDB
@@ -20,21 +21,21 @@ class SSDBObject(object):
     def __init__(self, request):
         host, port = get_sa_server(request)
         self.__conn = SSDB(connection_pool=BlockingConnectionPool(host=host, port=int(port)))
-        self.__init_arg(request)
+        # self.__init_arg(request)
 
-    def __init_arg(self, request):
-        if 'psa_size' in request.cookies:
-            self.limit = int(request.cookies.get('psa_size'))
-        else:
-            self.limit = 20
+    # def __init_arg(self, request):
+    #     if 'SIZE' in request.cookies:
+    #         self.limit = int(request.cookies.get('SIZE'))
+    #     else:
+    #         self.limit = 20
 
-    def queue_list(self, start, limit=None):
-        if limit:
-            self.limit = limit
-        queue_name_list = self.__conn.qlist(name_start=start, name_end='', limit=self.limit)
+    def queue_list(self, start, end, page_num, page_size):
+        all_list = self.__conn.qlist(name_start=start, name_end=end, limit=(page_num + 1) * page_size)
+        page_count, page_num = get_paging_tabs_info(data_count=len(all_list), page_no=page_num, page_row_num=page_size)
+        has_next = True if page_count > page_num else False
         queue_list = map(lambda queue_name: {'name': queue_name, 'size': self.__conn.qsize(queue_name)},
-                         queue_name_list)
-        return queue_list
+                         all_list[(page_num - 1) * page_size: page_num * page_size - 1])
+        return queue_list, has_next
 
     def queue_qpush(self, queue_name, item, push_type):
         if push_type == 'front':

@@ -1,0 +1,7 @@
+<!--翻页-->
+<nav aria-label="...">
+  <ul class="pager">
+    <li {% if page_num <= 1 %} class="disabled" {% endif %}><a href="?page_num={{ page_num-1 }}&s={{ select_arg.s }}">Prev</a></li>
+    <li {% if not has_next %} class="disabled" {% endif %}><a href="?page_num={{ page_num + 1 }}&s={{ select_arg.s }}">Next</a></li>
+  </ul>
+</nav>

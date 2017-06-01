@@ -2,10 +2,10 @@
 {% block content %}
     <h3>qrange: <code>{{ name }}</code></h3>
     <div class="pull-left">
-        <a class="btn btn-info btn-sm" href="{{ url_for('queue_qpush', n=queue_name) }}">
+        <a class="btn btn-info btn-sm" href="{{ url_for('queue_qpush', n=name) }}">
             <span class="glyphicon glyphicon-plus"></span> Push
         </a>
-        <a class="btn btn-danger btn-sm" href="{{ url_for('queue_qpop', n=queue_name) }}">
+        <a class="btn btn-danger btn-sm" href="{{ url_for('queue_qpop', n=name) }}">
             <span class="glyphicon glyphicon-plus"></span> Pop
         </a>
     </div>
@@ -14,12 +14,7 @@
         <form class="form-inline" action="{{ url_for('queue_qrange') }}">
             <div class="form-group">
                 <input type="hidden" name="n" value="{{ name }}">
-                <label for="size">Size</label>
-                <select name="page_size" id="size" class="form-control">
-                    <option value="20" {% if page_size == 20 %} selected{% endif %}> 20</option>
-                    <option value="50" {% if page_size == 50 %} selected{% endif %}> 50</option>
-                    <option value="100" {% if page_size == 100 %} selected{% endif %}> 100</option>
-                </select>
+                {% include 'select_size.html' %}
             </div>
             <button type="submit" class="btn btn-info btn-sm">Query</button>
         </form>
