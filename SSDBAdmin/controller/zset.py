@@ -8,7 +8,9 @@ from SSDBAdmin import app
 from flask import render_template, request, make_response, redirect, url_for
 
 from SSDBAdmin.model.ssdb_admin import SSDBObject
-from SSDBAdmin.util import get_paging_tabs_info
+
+
+# from SSDBAdmin.util import get_paging_tabs_info
 
 
 @app.route('/ssdbadmin/zset/')
@@ -26,6 +28,7 @@ def zset_lists():
     zset_list, has_next = ssdb_object.zset_list(start=start, page_num=page_num, page_size=int(page_size))
     select_arg = {'s': start, 'page_size': int(page_size)}
     resp = make_response(render_template('zset/zset.html', zset_list=zset_list, has_next=has_next,
+                                         has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='zset'))
     return resp
 
@@ -38,7 +41,9 @@ def zset_zset():
     """
     if request.method == 'GET':
         name = request.args.get('n')
-        return render_template('zset/zset_zset.html', name=name, active='zset')
+        key = request.args.get('k', '')
+        score = request.args.get('s', '')
+        return render_template('zset/zset_zset.html', name=name, key=key, score=score, active='zset')
     else:
         name = request.form.get('n')
         key = request.form.get('k')
@@ -78,3 +83,24 @@ def zset_zscan():
                                          active='zset'))
     resp.set_cookie('SIZE', str(page_size))
     return resp
+
+
+@app.route('/ssdbadmin/zset/zdel/', methods=['GET', 'POST'])
+def zset_zdel():
+    """
+    remove keys from zset_name
+    :return:
+    """
+    if request.method == 'GET':
+        name = request.args.get('n')
+        key = request.args.get('k')
+        keys = request.args.getlist('keys')
+        if key:
+            keys.append(key)
+        return render_template('zset/zset_zdel.html', keys=keys, name=name)
+    else:
+        keys = request.form.getlist('k')
+        name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.zset_del(name, *keys)
+        return redirect(url_for('zset_zscan', n=name))

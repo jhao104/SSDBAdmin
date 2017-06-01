@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form action="{{ url_for('zset_zdel') }}" method="post" class="center">
+        <h3>Remove 2 key(s) in <code>{{ name }}</code>?</h3>
+        <input type="hidden" name="n" value="{{ name }}">
+        {% for key in keys %}
+            <input type="hidden" name="k" value="{{ key }}">
+            <p style="font-weight: bold;">{{ key }}</p>
+        {% endfor %}
+        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+        <button class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</button>
+    </form>
+{% endblock %}

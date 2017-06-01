@@ -36,7 +36,7 @@
                 <td><a href="{{ url_for('queue_qget', n=name, i=start_index + loop.index0) }}">{{ start_index + loop.index0 }}</a></td>
                 <td>{{ item|truncate(100, True) }}</td>
                 <td>{{ item|count }}</td>
-                <td><a href="{{ url_for('queue_qget', n=name, i=start_index + loop.index0) }}" title="View"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+                <td><a href="{{ url_for('queue_qget', n=name, i=start_index + loop.index0) }}" title="View" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-eye-open"></span></a></td>
             </tr>
         {% endfor %}
         </tbody>

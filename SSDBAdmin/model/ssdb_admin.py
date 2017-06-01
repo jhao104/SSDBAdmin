@@ -163,3 +163,12 @@ class SSDBObject(object):
             has_prev = False
         item_list = [{'key': key, 'score': score} for key, score in item_dict.iteritems()]
         return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
+
+    def zset_del(self, zset_name, *keys):
+        """
+        remove keys from zset_name
+        :param zset_name:
+        :param keys:
+        :return:
+        """
+        return self.__conn.multi_zdel(zset_name, *keys)
