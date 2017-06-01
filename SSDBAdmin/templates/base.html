@@ -29,18 +29,15 @@
                 <li id="zset"><a href="{{ url_for('zset_lists') }}">zset</a></li>
                 <li id="queue"><a href="{{ url_for('queue_lists') }}">queue</a></li>
                 <li>
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                localhost:8888
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">localhost:8889</a></li>
-                                <li><a href="#">localhost:8887</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <form class="navbar-form navbar-left">
+                        <div class="form-group">
+                            <select name="SSDBADMIN_SERVER" class="form-control">
+                                {% for server in server_list %}
+                                <option value="{{ server }}"{% if current_server == server %} selected {% endif %}>{{ server }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -65,19 +62,8 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src={{ url_for("static", filename='js/function.js') }}></script>
 <script>
-    /*下拉菜单自动弹出 */
-    $(function () {
-        $(".dropdown").mouseover(function () {
-            $(this).addClass("open");
-        });
-
-        $(".dropdown").mouseleave(function () {
-            $(this).removeClass("open");
-        })
-
-    });
-
     /* 导航栏active */
     try {
         $('li#{{active}}').addClass('active');

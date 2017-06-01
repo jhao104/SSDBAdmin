@@ -8,7 +8,9 @@ from ssdb import SSDB
 
 
 def get_sa_server(request):
-    if 'SSDBADMINSERVER' in request.cookies:
+    if 'SSDBADMIN_SERVER' in request.args:
+        host, port = request.args.get('SSDBADMIN_SERVER').split(':')
+    elif 'SSDBADMIN_SERVER' in request.cookies:
         host, port = request.cookies.get('SSDBADMINSERVER').split(':')
     else:
         server = servers[0]
@@ -28,6 +30,9 @@ class SSDBObject(object):
     #         self.limit = int(request.cookies.get('SIZE'))
     #     else:
     #         self.limit = 20
+
+    def server_info(self):
+        info_list = self.__conn.execute_command('info')
 
     # ########## Queue operate ##########
     def queue_list(self, start, end, page_num, page_size):
@@ -172,3 +177,5 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.multi_zdel(zset_name, *keys)
+
+
