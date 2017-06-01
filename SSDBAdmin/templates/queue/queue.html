@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+{% block content %}
+    {% import 'query_part.html' as query %}
+    {{ query.query_part(add=url_for('queue_qpush'), select_arg=select_arg) }}
+    <div class="clear"></div>
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr class="info">
+            <th width="70%">Queue</th>
+            <th width="20%">Size</th>
+            <th width="10%">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for queue in queue_list %}
+            <tr>
+                <td><a href="{{ url_for('queue_qrange', n=queue.name) }}">{{ queue.name }}</a></td>
+                <td>{{ queue.size }}</td>
+                <td>
+                    <a class="btn btn-xs btn-info" href="{{ url_for('queue_qpush', n=queue.name) }}" title="Pop Items">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <a class="btn btn-xs btn-info" href="{{ url_for('queue_qpop', n=queue.name) }}" title="Pop Items">
+                        <span class="glyphicon glyphicon-minus"></span></a>
+                    <a class="btn btn-xs btn-danger" href="{{ url_for('queue_qclear', n=queue.name) }}" title="Remove Queue">
+                        <span class="glyphicon glyphicon-remove"></span></a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+    {% include 'pager_tabs.html' %}
+{% endblock %}

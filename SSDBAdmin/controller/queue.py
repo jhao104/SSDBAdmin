@@ -26,7 +26,7 @@ def queue_lists():
     ssdb_object = SSDBObject(request)
     queue_list, has_next = ssdb_object.queue_list(start=start, end=end, page_num=page_num, page_size=int(page_size))
     select_arg = {'s': start, 'e': end, 'page_size': int(page_size)}
-    resp = make_response(render_template('queue_list.html', queue_list=queue_list, has_next=has_next,
+    resp = make_response(render_template('queue/queue.html', queue_list=queue_list, has_next=has_next,
                                          page_num=page_num, select_arg=select_arg, active='queue'))
     return resp
 
@@ -39,7 +39,7 @@ def queue_qpush():
     """
     if request.method == 'GET':
         queue_name = request.args.get('n')
-        return render_template('queue_qpush.html', queue_name=queue_name, active='queue')
+        return render_template('queue/queue_qpush.html', queue_name=queue_name, active='queue')
     else:
         queue_name = request.form.get('queue_name')
         push_type = request.form.get('type')
@@ -57,7 +57,7 @@ def queue_qpop():
     """
     if request.method == 'GET':
         queue_name = request.args.get('n')
-        return render_template('queue_qpop.html', queue_name=queue_name, active='queue')
+        return render_template('queue/queue_qpop.html', queue_name=queue_name, active='queue')
     else:
         queue_name = request.form.get('n')
         pop_type = request.form.get('t')
@@ -84,7 +84,7 @@ def queue_qrange():
     offset = (page_num - 1) * int(page_size)
     item_list = ssdb_object.queue_qrange(queue_name, offset=offset, limit=page_size)
     select_arg = {'page_size': int(page_size)}
-    resp = make_response(render_template('queue_qrange.html',
+    resp = make_response(render_template('queue/queue_qrange.html',
                                          item_list=item_list,
                                          name=queue_name,
                                          page_num=int(page_num),
@@ -107,7 +107,7 @@ def queue_qget():
     index = request.args.get('i')
     ssdb_object = SSDBObject(request)
     item = ssdb_object.queue_qget(queue_name, index)
-    return render_template('queue_qget.html', name=queue_name, item=item, index=index, active='queue')
+    return render_template('queue/queue_qget.html', name=queue_name, item=item, index=index, active='queue')
 
 
 @app.route('/ssdbadmin/queue/qclear/', methods=['GET', 'POST'])
@@ -123,4 +123,4 @@ def queue_qclear():
         return redirect(url_for('queue_lists'))
     else:
         queue_name = request.args.get('n')
-        return render_template('queue_qclear.html', name=queue_name, active='queue')
+        return render_template('queue/queue_qclear.html', name=queue_name, active='queue')

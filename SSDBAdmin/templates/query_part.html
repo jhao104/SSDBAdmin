@@ -1,0 +1,20 @@
+{% macro query_part(add, select_arg) %}
+<div class="pull-left">
+        <a class="btn btn-info btn-md" href="{{ add }}">
+            <span class="glyphicon glyphicon-plus"></span> Add
+        </a>
+    </div>
+    <div class="pull-right">
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="start_name">Start name</label>
+                <input type="text" class="form-control" id="start_name" name="s" value="{{ select_arg.s }}" placeholder="start key name">
+            </div>
+            <div class="form-group">
+                {% include 'select_size.html' %}
+            </div>
+            <button type="submit" class="btn btn-info">Query</button>
+        </form>
+    </div>
+    <div class="clear"></div>
+{% endmacro %}

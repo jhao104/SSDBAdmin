@@ -29,6 +29,7 @@ class SSDBObject(object):
     #     else:
     #         self.limit = 20
 
+    # ########## Queue operate ##########
     def queue_list(self, start, end, page_num, page_size):
         """
         return a list of queue info between start and end
@@ -107,3 +108,20 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.qclear(queue_name)
+
+    # ########## Zset operate ##########
+
+    def zset_list(self, start, page_num, page_size):
+        """
+        return a list of zset info
+        :param start:
+        :param page_num:
+        :param page_size:
+        :return:
+        """
+        all_list = self.__conn.zlist(name_start=start, name_end='', limit=(page_num + 1) * page_size)
+        page_count, page_num = get_paging_tabs_info(data_count=len(all_list), page_no=page_num, page_row_num=page_size)
+        has_next = True if page_count > page_num else False
+        zset_list = map(lambda zset_name: {'name': zset_name, 'size': self.__conn.zsize(zset_name)},
+                         all_list[(page_num - 1) * page_size: page_num * page_size - 1])
+        return zset_list, has_next
