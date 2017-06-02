@@ -126,3 +126,16 @@ def hash_hclear():
     else:
         name = request.args.get('n')
         return render_template('hash/hash_hclear.html', name=name, active='hash')
+
+
+@app.route('/ssdbadmin/hash/hget/')
+def hash_hget():
+    """
+    show an item info from hash
+    :return:
+    """
+    name = request.args.get('n')
+    key = request.args.get('k')
+    ssdb_object = SSDBObject(request)
+    value = ssdb_object.hash_hget(name, key)
+    return render_template('hash/hash_hget.html', name=name, value=value, key=key, active='hash')

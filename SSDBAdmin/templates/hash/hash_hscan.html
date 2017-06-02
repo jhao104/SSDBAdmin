@@ -39,7 +39,7 @@
         {% for item in item_list %}
             <tr>
                 <td><input type="checkbox" value="{{ item.key }}" name="keys" class="cb"></td>
-                <td>{{ item.key }}</td>
+                <td><a href="{{ url_for('hash_hget', k=item.key, n=name) }}">{{ item.key }}</a></td>
                 <td>{{ item.value }}</td>
                 <td>{{ item.value|count }}</td>
                 <td>

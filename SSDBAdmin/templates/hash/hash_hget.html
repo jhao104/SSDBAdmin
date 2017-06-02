@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p><b>Hash:</b></p>{{ name }}
+    <p><b>Key:</b></p>{{ key }}
+    <p><b>Value({{ value|count }} bytes):</b></p>{{ value }}
+{% endblock %}

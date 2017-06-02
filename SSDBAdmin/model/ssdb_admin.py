@@ -204,7 +204,7 @@ class SSDBObject(object):
         :param key:
         :return:
         """
-        return self.__conn.zget(zset_name,key)
+        return self.__conn.zget(zset_name, key)
 
     # ################ Hash operate #############
 
@@ -278,6 +278,15 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.hclear(hash_name)
+
+    def hash_hget(self, hash_name, key):
+        """
+        Get the value of ``key`` within the hash_name
+        :param hash_name:
+        :param key:
+        :return:
+        """
+        return self.__conn.hget(hash_name,key)
 
 
 if __name__ == '__main__':
