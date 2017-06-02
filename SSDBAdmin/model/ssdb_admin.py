@@ -193,7 +193,6 @@ class SSDBObject(object):
         """
         **Clear&Delete** the zset specified by zset_name
         :param zset_name:
-        :param keys:
         :return:
         """
         return self.__conn.zclear(zset_name)
@@ -262,6 +261,14 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.multi_hdel(hash_name, *keys)
+
+    def hash_hclear(self, hash_name):
+        """
+        **Clear&Delete** the hash specified by hash_name
+        :param hash_name:
+        :return:
+        """
+        return self.__conn.hclear(hash_name)
 
 
 if __name__ == '__main__':

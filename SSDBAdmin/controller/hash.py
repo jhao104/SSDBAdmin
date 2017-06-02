@@ -110,3 +110,19 @@ def hash_hdel():
         ssdb_object = SSDBObject(request)
         ssdb_object.hash_hdel(name, *keys)
         return redirect(url_for('hash_hscan', n=name))
+
+
+@app.route('/ssdbadmin/hash/hclear/', methods=['GET', 'POST'])
+def hash_hclear():
+    """
+    delete  the specified hash data
+    :return:
+    """
+    if request.method == 'POST':
+        name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.hash_hclear(name)
+        return redirect(url_for('hash_lists'))
+    else:
+        name = request.args.get('n')
+        return render_template('hash/hash_hclear.html', name=name, active='hash')
