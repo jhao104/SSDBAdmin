@@ -37,8 +37,10 @@ class SSDBObject(object):
 
         def parse_disk_usage(stats):
             return sum([int(each.split()[2]) for each in stats.split('\n')[3:-1]])
+
         return {'info_list': info_list, 'version': version, 'links': links, 'total_calls': total_calls,
-                'dbsize': dbsize, 'binlogs': binlogs, 'serv_key_range': serv_key_range, 'data_key_range': data_key_range,
+                'dbsize': dbsize, 'binlogs': binlogs, 'serv_key_range': serv_key_range,
+                'data_key_range': data_key_range,
                 'stats': stats, 'disk_usage': parse_disk_usage(stats)}
 
     # ########## Queue operate ##########
@@ -206,8 +208,8 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        next = self.__conn.hlist(name_start=start_name, name_end='', limit=limit+1)
-        prev = self.__conn.hrlist(name_start=start_name, name_end='', limit=limit+1)
+        next = self.__conn.hlist(name_start=start_name, name_end='', limit=limit + 1)
+        prev = self.__conn.hrlist(name_start=start_name, name_end='', limit=limit + 1)
         item_list = prev if tp == 'prev' else next
         has_next = False if len(next) <= limit and tp == 'next' else True
         has_prev = False if len(prev) <= limit and tp == 'prev' else True
@@ -220,7 +222,27 @@ class SSDBObject(object):
                         item_list)
         return has_next, has_prev, hash_list[:-1] if len(hash_list) > limit else hash_list
 
-
+    def hash_hscan(self, hash_name, start_key, tp, limit):
+        """
+        Return a dict mapping key/value in the top ``limit`` keys start with start_key within hash_name
+        :param hash_name:
+        :param start_key:
+        :param tp: next or prev  next(ascending) prev(descending)
+        :param limit:
+        :return:
+        """
+        next = self.__conn.hscan(hash_name, key_start=start_key, key_end='', limit=limit + 1)
+        prev = self.__conn.hrscan(hash_name, key_start=start_key, key_end='', limit=limit + 1)
+        item_dict = prev if tp == 'prev' else next
+        has_next = False if len(next) <= limit and tp == 'next' else True
+        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        if not tp:
+            has_next = False if len(next) <= limit else True
+            has_prev = False
+        item_list = [{'key': key, 'value': value} for key, value in item_dict.iteritems()]
+        if tp == 'prev':
+            item_list = item_list[::-1]
+        return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
 
 
 if __name__ == '__main__':

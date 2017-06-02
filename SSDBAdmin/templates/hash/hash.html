@@ -13,7 +13,7 @@
         <tbody>
         {% for hash in hash_list %}
             <tr>
-                <td><a href="{{ url_for('zset_zscan', n=hash.name) }}">{{ hash.name }}</a></td>
+                <td><a href="{{ url_for('hash_hscan', n=hash.name) }}">{{ hash.name }}</a></td>
                 <td>{{ hash.size }}</td>
                 <td>
                     <a class="btn btn-xs btn-danger" href="{{ url_for('queue_qclear', n=hash.name) }}" title="Remove">
