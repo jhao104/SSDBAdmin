@@ -11,3 +11,9 @@ $(function () {
     })
     
 })
+
+function check_all(cb){
+    $('#data_list input.cb').each(function(i, e){
+        e.checked = cb.checked;
+    });
+}

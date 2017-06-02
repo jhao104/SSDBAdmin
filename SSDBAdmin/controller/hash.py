@@ -89,3 +89,24 @@ def hash_hset():
         ssdb_object = SSDBObject(request)
         ssdb_object.hash_hset(name, key, value)
         return redirect(url_for('hash_hscan', n=name))
+
+
+@app.route('/ssdbadmin/hash/hash_hdel/', methods=['GET', 'POST'])
+def hash_hdel():
+    """
+    remove keys from zset_name
+    :return:
+    """
+    if request.method == 'GET':
+        name = request.args.get('n')
+        key = request.args.get('k')
+        keys = request.args.getlist('keys')
+        if key:
+            keys.append(key)
+        return render_template('hash/hash_hdel.html', keys=keys, name=name, active='hash')
+    else:
+        keys = request.form.getlist('k')
+        name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.hash_hdel(name, *keys)
+        return redirect(url_for('hash_hscan', n=name))

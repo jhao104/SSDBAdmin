@@ -254,6 +254,15 @@ class SSDBObject(object):
         """
         self.__conn.hset(hash_name, key, value)
 
+    def hash_hdel(self, hash_name, *keys):
+        """
+        Remove keys from hash_name
+        :param hash_name:
+        :param item:
+        :return:
+        """
+        return self.__conn.multi_hdel(hash_name, *keys)
+
 
 if __name__ == '__main__':
     s = SSDB(connection_pool=BlockingConnectionPool(host='42.123.99.64', port=int(8889)))

@@ -102,7 +102,7 @@ def zset_zdel():
         keys = request.args.getlist('keys')
         if key:
             keys.append(key)
-        return render_template('zset/zset_zdel.html', keys=keys, name=name)
+        return render_template('zset/zset_zdel.html', keys=keys, name=name, active='zset')
     else:
         keys = request.form.getlist('k')
         name = request.form.get('n')
