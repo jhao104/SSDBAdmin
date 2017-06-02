@@ -43,7 +43,7 @@
                 <td>{{ item.value }}</td>
                 <td>{{ item.value|count }}</td>
                 <td>
-                    <a href="{{ url_for('zset_zset', n=name, k=item.key, s=item.score) }}" class="btn btn-xs btn-info" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <a href="{{ url_for('hash_hset', n=name, k=item.key, v=item.value) }}" class="btn btn-xs btn-info" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                     <a href="{{ url_for('zset_zdel', n=name, k=item.key) }}" class="btn btn-xs btn-danger" title="Remove"><span class="glyphicon glyphicon-remove"></span></a>
                 </td>
             </tr>

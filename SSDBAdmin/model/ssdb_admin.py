@@ -244,6 +244,16 @@ class SSDBObject(object):
             item_list = item_list[::-1]
         return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
 
+    def hash_hset(self, hash_name, key, value):
+        """
+         Set the value of key within the hash_name
+        :param hash_name:
+        :param key:
+        :param value:
+        :return:
+        """
+        self.__conn.hset(hash_name, key, value)
+
 
 if __name__ == '__main__':
     s = SSDB(connection_pool=BlockingConnectionPool(host='42.123.99.64', port=int(8889)))

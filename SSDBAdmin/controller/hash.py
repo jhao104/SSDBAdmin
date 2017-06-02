@@ -69,3 +69,23 @@ def hash_hscan():
                                          active='hash'))
     resp.set_cookie('SIZE', str(page_size))
     return resp
+
+
+@app.route('/ssdbadmin/hash/hset', methods=['GET', 'POST'])
+def hash_hset():
+    """
+    Set the value of key within the hash_name
+    :return:
+    """
+    if request.method == 'GET':
+        name = request.args.get('n')
+        key = request.args.get('k', '')
+        value = request.args.get('v', '')
+        return render_template('hash/hash_hset.html', name=name, key=key, value=value, active='hash')
+    else:
+        name = request.form.get('n')
+        key = request.form.get('k')
+        value = request.form.get('v')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.hash_hset(name, key, value)
+        return redirect(url_for('hash_hscan', n=name))
