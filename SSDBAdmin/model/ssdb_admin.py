@@ -288,7 +288,56 @@ class SSDBObject(object):
         """
         return self.__conn.hget(hash_name,key)
 
+    # ################ kv operate #############
+
+    def kv_kscan(self, name_start, tp, limit):
+        """
+
+        :param name_start:
+        :param tp:
+        :param limit:
+        :return:
+        """
+        next = self.__conn.scan(name_start=name_start, name_end='', limit=limit+1)
+        prev = self.__conn.rscan(name_start=name_start, name_end='', limit=limit+1)
+        item_dict = prev if tp == 'prev' else next
+        has_next = False if len(next) <= limit and tp == 'next' else True
+        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        if not tp:
+            has_next = False if len(next) <= limit else True
+            has_prev = False
+        item_list = [{'key': key, 'value': value} for key, value in item_dict.iteritems()]
+        if tp == 'prev':
+            item_list = item_list[::-1]
+        return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
+
+    def kv_get(self, key):
+        """
+        Return the value at key ``name``, or ``None`` if the key doesn't exist
+        :param key:
+        :return:
+        """
+        return self.__conn.get(key)
+
+    def kv_set(self, key, value):
+        """
+        Set the value at key
+        :param key:
+        :param value:
+        :return:
+        """
+        return self.__conn.set(key, value)
+
+    def kv_del(self, *keys):
+        """
+        Delete one or more keys specified by ``keys``
+        :param keys:
+        :return:
+        """
+        return self.__conn.multi_del(*keys)
 
 if __name__ == '__main__':
     s = SSDB(connection_pool=BlockingConnectionPool(host='42.123.99.64', port=int(8889)))
-    print s.execute_command('info')[17]
+    # print s.execute_command('info')[17]
+    import time
+    print s.ttl('test1')

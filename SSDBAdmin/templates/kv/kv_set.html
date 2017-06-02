@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>Add or Update KV type record</h3>
+    <form action="{{ url_for('kv_set') }}" class="center" method="post">
+        <table class="table table-striped">
+            <thead>
+            <tr class="info">
+                <th width="40%">Key</th>
+                <th width="60%">Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input type="text" name="k" class="form-control"
+                        {% if key %}
+                           value="{{ key }}" readonly
+                        {% endif %}
+                           required></td>
+                <td><textarea name="v" class="form-control">{{ value }}</textarea></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="center">
+            <button type="submit" class="btn btn-sm btn-primary">Save &nbsp;</button>
+            <button class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</button>
+        </div>
+    </form>
+{% endblock %}

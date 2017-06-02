@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form action="{{ url_for('zset_zdel') }}" method="post" class="center">
-        <h3>Remove key in <code>{{ name }}</code>?</h3>
+    <form action="{{ url_for('kv_del') }}" method="post" class="center">
+        <h3>Remove key ?</h3>
         <input type="hidden" name="n" value="{{ name }}">
         {% for key in keys %}
             <input type="hidden" name="k" value="{{ key }}">
