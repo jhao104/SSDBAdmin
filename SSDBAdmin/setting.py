@@ -11,4 +11,4 @@ servers = [
     }
 ]
 
-DEBUG = True
+DEBUG = False

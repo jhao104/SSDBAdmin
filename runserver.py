@@ -1,11 +1,21 @@
 #!/usr/bin/env python
 
 from SSDBAdmin import app
-from flask import render_template, request, make_response
+from flask import render_template, request, make_response, redirect, url_for
 
 from SSDBAdmin.model.ssdb_admin import get_sa_server
 from SSDBAdmin.model.ssdb_admin import SSDBObject
 from SSDBAdmin.setting import servers
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return redirect(url_for('index'))
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html', error=error)
 
 
 @app.context_processor
