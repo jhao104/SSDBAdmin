@@ -209,9 +209,11 @@ class SSDBObject(object):
         next = self.__conn.hlist(name_start=start_name, name_end='', limit=limit+1)
         prev = self.__conn.hrlist(name_start=start_name, name_end='', limit=limit+1)
         item_list = prev if tp == 'prev' else next
-        tp = 'next' if not tp else tp
         has_next = False if len(next) <= limit and tp == 'next' else True
         has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        if not tp:
+            has_next = False if len(next) <= limit else True
+            has_prev = False
         if tp == 'prev':
             item_list = item_list[::-1]
         hash_list = map(lambda hash_name: {'name': hash_name, 'size': self.__conn.hsize(hash_name)},
