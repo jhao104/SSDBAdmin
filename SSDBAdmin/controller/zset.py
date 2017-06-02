@@ -125,3 +125,16 @@ def zset_zclear():
     else:
         queue_name = request.args.get('n')
         return render_template('zset/zset_zclear.html', name=queue_name, active='zset')
+
+
+@app.route('/ssdbadmin/zset/zget/')
+def zset_zget():
+    """
+    show an item info from zset
+    :return:
+    """
+    name = request.args.get('n')
+    key = request.args.get('k')
+    ssdb_object = SSDBObject(request)
+    score = ssdb_object.zset_zget(name, key)
+    return render_template('zset/zset_zget.html', name=name, score=score, key=key, active='zset')

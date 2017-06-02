@@ -38,7 +38,7 @@
         {% for item in item_list %}
             <tr>
                 <td><input type="checkbox" value="{{ item.key }}" name="keys"></td>
-                <td>{{ item.key }}</td>
+                <td><a href="{{ url_for('zset_zget', n=name, k=item.key) }}">{{ item.key|truncate(100, True) }}</a></td>
                 <td>{{ item.score }}</td>
                 <td>
                     <a href="{{ url_for('zset_zset', n=name, k=item.key, s=item.score) }}" class="btn btn-xs btn-info" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>

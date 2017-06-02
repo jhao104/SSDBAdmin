@@ -197,6 +197,15 @@ class SSDBObject(object):
         """
         return self.__conn.zclear(zset_name)
 
+    def zset_zget(self, zset_name, key):
+        """
+        Return the score of element ``key`` in sorted zset_name
+        :param zset_name:
+        :param key:
+        :return:
+        """
+        return self.__conn.zget(zset_name,key)
+
     # ################ Hash operate #############
 
     def hash_list(self, start_name, tp, limit):
