@@ -10,7 +10,7 @@ from ssdb import SSDB
 def get_sa_server(request):
     if 'SSDBADMIN_SERVER' in request.args:
         host, port = request.args.get('SSDBADMIN_SERVER').split(':')
-    elif 'SSDBADMIN_SERVER' in request.cookies:
+    elif 'SSDBADMINSERVER' in request.cookies:
         host, port = request.cookies.get('SSDBADMINSERVER').split(':')
     else:
         server = servers[0]
@@ -23,16 +23,23 @@ class SSDBObject(object):
     def __init__(self, request):
         host, port = get_sa_server(request)
         self.__conn = SSDB(connection_pool=BlockingConnectionPool(host=host, port=int(port)))
-        # self.__init_arg(request)
-
-    # def __init_arg(self, request):
-    #     if 'SIZE' in request.cookies:
-    #         self.limit = int(request.cookies.get('SIZE'))
-    #     else:
-    #         self.limit = 20
 
     def server_info(self):
         info_list = self.__conn.execute_command('info')
+        version = info_list[3]
+        links = info_list[5]
+        total_calls = info_list[7]
+        dbsize = info_list[9]
+        binlogs = info_list[11]
+        serv_key_range = info_list[13]
+        data_key_range = info_list[15]
+        stats = info_list[17]
+
+        def parse_disk_usage(stats):
+            return sum([int(each.split()[2]) for each in stats.split('\n')[3:-1]])
+        return {'info_list': info_list, 'version': version, 'links': links, 'total_calls': total_calls,
+                'dbsize': dbsize, 'binlogs': binlogs, 'serv_key_range': serv_key_range, 'data_key_range': data_key_range,
+                'stats': stats, 'disk_usage': parse_disk_usage(stats)}
 
     # ########## Queue operate ##########
     def queue_list(self, start, end, page_num, page_size):
@@ -178,4 +185,6 @@ class SSDBObject(object):
         """
         return self.__conn.multi_zdel(zset_name, *keys)
 
-
+if __name__ == '__main__':
+    s = SSDB(connection_pool=BlockingConnectionPool(host='42.123.99.64', port=int(8889)))
+    print s.execute_command('info')[17]

@@ -4,6 +4,7 @@ from SSDBAdmin import app
 from flask import render_template, request, make_response
 
 from SSDBAdmin.model.ssdb_admin import get_sa_server
+from SSDBAdmin.model.ssdb_admin import SSDBObject
 from SSDBAdmin.setting import servers
 
 
@@ -18,7 +19,9 @@ def pas_server():
 @app.route('/ssdbadmin/')
 def index():
     host, port = get_sa_server(request)
-    resp = make_response(render_template('index.html'))
+    ssdb_object = SSDBObject(request)
+    server_info = ssdb_object.server_info()
+    resp = make_response(render_template('index.html', server_info=server_info))
     resp.set_cookie('SSDBADMINSERVER', '{host}:{port}'.format(host=host, port=port))
     return resp
 
