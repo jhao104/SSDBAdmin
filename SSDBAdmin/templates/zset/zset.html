@@ -16,7 +16,7 @@
                 <td><a href="{{ url_for('zset_zscan', n=zset.name) }}">{{ zset.name }}</a></td>
                 <td>{{ zset.size }}</td>
                 <td>
-                    <a class="btn btn-xs btn-danger" href="{{ url_for('queue_qclear', n=zset.name) }}" title="Remove">
+                    <a class="btn btn-xs btn-danger" href="{{ url_for('zset_zclear', n=zset.name) }}" title="Remove">
                         <span class="glyphicon glyphicon-remove"></span></a>
                 </td>
             </tr>

@@ -30,6 +30,7 @@ def zset_lists():
     resp = make_response(render_template('zset/zset.html', zset_list=zset_list, has_next=has_next,
                                          has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='zset'))
+    resp.set_cookie('SIZE', page_size)
     return resp
 
 
@@ -71,7 +72,11 @@ def zset_zscan():
         page_size = request.cookies.get('SIZE', 20)
     ssdb_object = SSDBObject(request)
     has_next, has_prev, item_list = ssdb_object.zset_zscan(name, key_start, tp, limit=int(page_size))
-    select_arg = {'page_size': int(page_size), 's': item_list[-1].get('key') if item_list else ''}
+    prev_s, next_s = '', ''
+    if item_list:
+        next_s = item_list[-1].get('key')
+        prev_s = item_list[0].get('key')
+    select_arg = {'page_size': int(page_size), 'prev_s': prev_s, 'next_s': next_s}
     resp = make_response(render_template('zset/zset_zscan.html',
                                          item_list=item_list,
                                          name=name,
@@ -104,3 +109,19 @@ def zset_zdel():
         ssdb_object = SSDBObject(request)
         ssdb_object.zset_del(name, *keys)
         return redirect(url_for('zset_zscan', n=name))
+
+
+@app.route('/ssdbadmin/zset/zclear/', methods=['GET', 'POST'])
+def zset_zclear():
+    """
+    delete  the specified zset data
+    :return:
+    """
+    if request.method == 'POST':
+        name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.zset_zclear(name)
+        return redirect(url_for('zset_lists'))
+    else:
+        queue_name = request.args.get('n')
+        return render_template('zset/zset_zclear.html', name=queue_name, active='zset')

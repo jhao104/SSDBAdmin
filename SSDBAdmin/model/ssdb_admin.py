@@ -174,6 +174,8 @@ class SSDBObject(object):
             has_next = False if len(next) <= limit else True
             has_prev = False
         item_list = [{'key': key, 'score': score} for key, score in item_dict.iteritems()]
+        if tp == 'prev':
+            item_list = item_list[::-1]
         return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
 
     def zset_del(self, zset_name, *keys):
@@ -184,6 +186,40 @@ class SSDBObject(object):
         :return:
         """
         return self.__conn.multi_zdel(zset_name, *keys)
+
+    def zset_zclear(self, zset_name):
+        """
+        **Clear&Delete** the zset specified by zset_name
+        :param zset_name:
+        :param keys:
+        :return:
+        """
+        return self.__conn.zclear(zset_name)
+
+    # ################ Hash operate #############
+
+    def hash_list(self, start_name, tp, limit):
+        """
+        return  Return a list of the top ``limit`` hash's name start with start_name
+        :param start_name:
+        :param tp: next or prev  next(ascending) prev(descending)
+        :param limit:
+        :return:
+        """
+        next = self.__conn.hlist(name_start=start_name, name_end='', limit=limit+1)
+        prev = self.__conn.hrlist(name_start=start_name, name_end='', limit=limit+1)
+        item_list = prev if tp == 'prev' else next
+        tp = 'next' if not tp else tp
+        has_next = False if len(next) <= limit and tp == 'next' else True
+        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        if tp == 'prev':
+            item_list = item_list[::-1]
+        hash_list = map(lambda hash_name: {'name': hash_name, 'size': self.__conn.hsize(hash_name)},
+                        item_list)
+        return has_next, has_prev, hash_list[:-1] if len(hash_list) > limit else hash_list
+
+
+
 
 if __name__ == '__main__':
     s = SSDB(connection_pool=BlockingConnectionPool(host='42.123.99.64', port=int(8889)))
