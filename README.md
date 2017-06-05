@@ -1,5 +1,9 @@
-# SSDBAdmin
+SSDBAdmin
+=======
+[![Build Status](https://travis-ci.org/jhao104/SSDBAdmin.svg?branch=master)](https://travis-ci.org/jhao104/SSDBAdmin)
+
 SSDB数据库的可视化界面管理工具
+
 
 ## 功能
     提供SSDB数据的hash/zset/kv/queue等数据结构的增删改查等功能
