@@ -19,8 +19,8 @@
         {% for item in item_list %}
             <tr>
                 <td><input type="checkbox" value="{{ item.key }}" name="keys" class="cb"></td>
-                <td><a href="{{ url_for('kv_get', k=item.key) }}">{{ item.key|truncate(100, True) }}</a></td>
-                <td>{{ item.value|truncate(100, True) }}</td>
+                <td><a href="{{ url_for('kv_get', k=item.key) }}">{{ item.key|safe|truncate(100, True) }}</a></td>
+                <td>{{ item.value|safe|truncate(100, True) }}</td>
                 <td>{{ item.value|count }}</td>
                 <td>
                     <a href="{{ url_for('kv_set', k=item.key, v=item.value) }}" class="btn btn-xs btn-info"
