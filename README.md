@@ -20,10 +20,12 @@ SSDB数据库的可视化界面管理工具
 
 编辑配置文件`SSDBAdmin/setting.py`:
 ```
-servers = [
+# SSDB config
+db_config = [
     {"host": "127.0.0.1",
      "port": 8888},
    ]
+PORT = 5000  # server config
 ```
 将`host`和`port`修改成正确值。
 
@@ -33,7 +35,7 @@ servers = [
 启动:
 ```python runserver.py```
 
-访问:http://127.0.0.1:8989/ssdbadmin
+访问:http://127.0.0.1:5000/ssdbadmin
 
 
 ## Screenshots
