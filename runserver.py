@@ -5,7 +5,7 @@ from flask import render_template, request, make_response, redirect, url_for
 
 from SSDBAdmin.model.ssdb_admin import get_sa_server
 from SSDBAdmin.model.ssdb_admin import SSDBObject
-from SSDBAdmin.setting import servers
+from SSDBAdmin.setting import db_config, PORT
 
 
 @app.errorhandler(404)
@@ -21,7 +21,7 @@ def internal_error(error):
 @app.context_processor
 def pas_server():
     host, port = get_sa_server(request)
-    server_list = ['{}:{}'.format(server.get('host'), server.get('port')) for server in servers]
+    server_list = ['{}:{}'.format(server.get('host'), server.get('port')) for server in db_config]
     current_server = '{}:{}'.format(host, port)
     return dict(server_list=server_list, current_server=current_server)
 
@@ -37,4 +37,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8989)
+    app.run(host='0.0.0.0', port=PORT)

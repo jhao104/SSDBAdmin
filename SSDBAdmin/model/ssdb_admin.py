@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from SSDBAdmin.setting import servers
+from SSDBAdmin.setting import db_config
 from SSDBAdmin.util import get_paging_tabs_info
 
 from ssdb.connection import BlockingConnectionPool
@@ -13,7 +13,7 @@ def get_sa_server(request):
     elif 'SSDBADMINSERVER' in request.cookies:
         host, port = request.cookies.get('SSDBADMINSERVER').split(':')
     else:
-        server = servers[0]
+        server = db_config[0]
         host = server.get('host', 'localhost')
         port = server.get('port', 8888)
     return host, port

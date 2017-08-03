@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
-servers = [
+db_config = [
     {
-        "host": "172.16.1.69",
+        "host": "host1",
         "port": 8889
     },
     {
-        "host": "127.0.0.1",
-        "port": 8889
+        "host": "localhost",
+        "port": 8888
     }
 ]
 
 DEBUG = False
+PORT = 5000
