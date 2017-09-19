@@ -3,8 +3,17 @@
 from SSDBAdmin.setting import db_config
 from SSDBAdmin.util import get_paging_tabs_info
 
-from ssdb.connection import BlockingConnectionPool
-from ssdb import SSDB
+from redis.connection import BlockingConnectionPool
+from redis import Redis
+
+
+##############################################
+# use python-redis driver replace ssdb-py,
+# python-ssdb driver backward in technique.
+
+# if python-redis driver not support ssdb command,
+# use `execute_command` method.
+##############################################
 
 
 def get_sa_server(request):
@@ -22,18 +31,18 @@ def get_sa_server(request):
 class SSDBObject(object):
     def __init__(self, request):
         host, port = get_sa_server(request)
-        self.__conn = SSDB(connection_pool=BlockingConnectionPool(host=host, port=int(port)))
+        self.__conn = Redis(connection_pool=BlockingConnectionPool(host=host, port=int(port)))
 
     def server_info(self):
         info_list = self.__conn.execute_command('info')
-        version = info_list[3]
-        links = info_list[5]
-        total_calls = info_list[7]
-        dbsize = info_list[9]
-        binlogs = info_list[11]
-        serv_key_range = info_list[13]
-        data_key_range = info_list[15]
-        stats = info_list[17]
+        version = info_list[2]
+        links = info_list[4]
+        total_calls = info_list[6]
+        dbsize = info_list[8]
+        binlogs = info_list[10]
+        serv_key_range = info_list[12]
+        data_key_range = info_list[14]
+        stats = info_list[16]
 
         def parse_disk_usage(stats):
             return sum([int(each.split()[2]) for each in stats.split('\n')[3:-1]])
@@ -53,10 +62,10 @@ class SSDBObject(object):
         :param page_size:
         :return:
         """
-        all_list = self.__conn.qlist(name_start=start, name_end=end, limit=(page_num + 1) * page_size)
+        all_list = self.__conn.execute_command('qlist', start, end, (page_num + 1) * page_size)
         page_count, page_num = get_paging_tabs_info(data_count=len(all_list), page_no=page_num, page_row_num=page_size)
         has_next = True if page_count > page_num else False
-        queue_list = map(lambda queue_name: {'name': queue_name, 'size': self.__conn.qsize(queue_name)},
+        queue_list = map(lambda queue_name: {'name': queue_name, 'size': self.__conn.llen(queue_name)},
                          all_list[(page_num - 1) * page_size: page_num * page_size - 1])
         return queue_list, has_next
 
@@ -69,10 +78,10 @@ class SSDBObject(object):
         :return:
         """
         if push_type == 'front':
-            self.__conn.qpush_front(queue_name, item)
+            self.__conn.lpush(queue_name, item)
         else:
             # push_type = 'back'
-            self.__conn.qpush_back(queue_name, item)
+            self.__conn.rpush(queue_name, item)
 
     def queue_qpop(self, queue_name, number, pop_type):
         """
@@ -83,10 +92,10 @@ class SSDBObject(object):
         :return:
         """
         if pop_type == 'front':
-            self.__conn.qpop_front(queue_name, int(number))
+            self.__conn.execute_command('qpop_front', queue_name, int(number))
         else:
             # pop_type = 'back
-            self.__conn.qpop_back(queue_name, int(number))
+            self.__conn.execute_command('qpop_back', queue_name, int(number))
 
     def queue_qrange(self, queue_name, offset, limit):
         """
@@ -96,7 +105,7 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        return self.__conn.qrange(queue_name, int(offset), int(limit))
+        return self.__conn.lrange(queue_name, int(offset), int(limit))
 
     def queue_size(self, queue_name):
         """
@@ -104,7 +113,7 @@ class SSDBObject(object):
         :param queue_name:
         :return:
         """
-        return self.__conn.qsize(queue_name)
+        return self.__conn.llen(queue_name)
 
     def queue_qget(self, queue_name, index):
         """
@@ -113,7 +122,7 @@ class SSDBObject(object):
         :param index:
         :return:
         """
-        return self.__conn.qget(queue_name, int(index))
+        return self.__conn.lindex(queue_name, int(index))
 
     def queue_qclear(self, queue_name):
         """
@@ -121,7 +130,7 @@ class SSDBObject(object):
         :param queue_name:
         :return:
         """
-        return self.__conn.qclear(queue_name)
+        return self.__conn.execute_command('qclear', queue_name)
 
     # ########## Zset operate ##########
 
@@ -133,10 +142,10 @@ class SSDBObject(object):
         :param page_size:
         :return:
         """
-        all_list = self.__conn.zlist(name_start=start, name_end='', limit=(page_num + 1) * page_size)
+        all_list = self.__conn.execute_command('zlist', start, '', (page_num + 1) * page_size)
         page_count, page_num = get_paging_tabs_info(data_count=len(all_list), page_no=page_num, page_row_num=page_size)
         has_next = True if page_count > page_num else False
-        zset_list = map(lambda zset_name: {'name': zset_name, 'size': self.__conn.zsize(zset_name)},
+        zset_list = map(lambda zset_name: {'name': zset_name, 'size': self.__conn.zcard(zset_name)},
                         all_list[(page_num - 1) * page_size: page_num * page_size - 1])
         return zset_list, has_next
 
@@ -148,7 +157,7 @@ class SSDBObject(object):
         :param score:
         :return:
         """
-        return self.__conn.zset(zset_name, key, score)
+        return self.__conn.execute_command('zset', zset_name, key, score)
 
     def zset_zsize(self, zset_name):
         """
@@ -156,7 +165,7 @@ class SSDBObject(object):
         :param zset_name:
         :return:
         """
-        return self.__conn.zsize(zset_name)
+        return self.__conn.execute_command('zsize', zset_name)
 
     def zset_zscan(self, zset_name, key, tp, limit):
         """
@@ -167,15 +176,15 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        next = self.__conn.zscan(name=zset_name, key_start=key, score_start='', score_end='', limit=limit + 1)
-        prev = self.__conn.zrscan(name=zset_name, key_start=key, score_start='', score_end='', limit=limit + 1)
-        item_dict = prev if tp == 'prev' else next
-        has_next = False if len(next) <= limit and tp == 'next' else True
-        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        next = self.__conn.execute_command('zscan', zset_name, key, '', '', limit + 1)
+        prev = self.__conn.execute_command('zrscan', zset_name, key, '', '', limit + 1)
+        items = prev if tp == 'prev' else next
+        has_next = False if len(next) / 2 <= limit and tp == 'next' else True
+        has_prev = False if len(prev) / 2 <= limit and tp == 'prev' else True
         if not tp:
-            has_next = False if len(next) <= limit else True
+            has_next = False if len(next) / 2 <= limit else True
             has_prev = False
-        item_list = [{'key': key, 'score': score} for key, score in item_dict.iteritems()]
+        item_list = [{'key': items[index], 'score': items[index + 1]} for index in range(0, len(items), 2)]
         if tp == 'prev':
             item_list = item_list[::-1]
         return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
@@ -187,7 +196,7 @@ class SSDBObject(object):
         :param keys:
         :return:
         """
-        return self.__conn.multi_zdel(zset_name, *keys)
+        return self.__conn.execute_command('multi_zdel', zset_name, *keys)
 
     def zset_zclear(self, zset_name):
         """
@@ -195,7 +204,7 @@ class SSDBObject(object):
         :param zset_name:
         :return:
         """
-        return self.__conn.zclear(zset_name)
+        return self.__conn.execute_command('zclear', zset_name)
 
     def zset_zget(self, zset_name, key):
         """
@@ -204,7 +213,7 @@ class SSDBObject(object):
         :param key:
         :return:
         """
-        return self.__conn.zget(zset_name, key)
+        return self.__conn.zscore(zset_name, key)
 
     # ################ Hash operate #############
 
@@ -216,8 +225,8 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        next = self.__conn.hlist(name_start=start_name, name_end='', limit=limit + 1)
-        prev = self.__conn.hrlist(name_start=start_name, name_end='', limit=limit + 1)
+        next = self.__conn.execute_command('hlist', start_name, '', limit + 1)
+        prev = self.__conn.execute_command('hrlist', start_name, '', limit + 1)
         item_list = prev if tp == 'prev' else next
         has_next = False if len(next) <= limit and tp == 'next' else True
         has_prev = False if len(prev) <= limit and tp == 'prev' else True
@@ -226,7 +235,7 @@ class SSDBObject(object):
             has_prev = False
         if tp == 'prev':
             item_list = item_list[::-1]
-        hash_list = map(lambda hash_name: {'name': hash_name, 'size': self.__conn.hsize(hash_name)},
+        hash_list = map(lambda hash_name: {'name': hash_name, 'size': self.__conn.hlen(hash_name)},
                         item_list)
         return has_next, has_prev, hash_list[:-1] if len(hash_list) > limit else hash_list
 
@@ -239,15 +248,15 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        next = self.__conn.hscan(hash_name, key_start=start_key, key_end='', limit=limit + 1)
-        prev = self.__conn.hrscan(hash_name, key_start=start_key, key_end='', limit=limit + 1)
-        item_dict = prev if tp == 'prev' else next
-        has_next = False if len(next) <= limit and tp == 'next' else True
-        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        next = self.__conn.execute_command('hscan', hash_name, start_key, '', limit + 1)
+        prev = self.__conn.execute_command('hrscan', hash_name, start_key, '', limit + 1)
+        items = prev if tp == 'prev' else next
+        has_next = False if len(next) / 2 <= limit and tp == 'next' else True
+        has_prev = False if len(prev) / 2 <= limit and tp == 'prev' else True
         if not tp:
-            has_next = False if len(next) <= limit else True
+            has_next = False if len(next) / 2 <= limit else True
             has_prev = False
-        item_list = [{'key': key, 'value': value} for key, value in item_dict.iteritems()]
+        item_list = [{'key': items[index], 'value': items[index + 1]} for index in range(0, len(items), 2)]
         if tp == 'prev':
             item_list = item_list[::-1]
         return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
@@ -269,7 +278,7 @@ class SSDBObject(object):
         :param item:
         :return:
         """
-        return self.__conn.multi_hdel(hash_name, *keys)
+        return self.__conn.execute_command('multi_hdel', hash_name, *keys)
 
     def hash_hclear(self, hash_name):
         """
@@ -277,7 +286,7 @@ class SSDBObject(object):
         :param hash_name:
         :return:
         """
-        return self.__conn.hclear(hash_name)
+        return self.__conn.execute_command('hclear', hash_name)
 
     def hash_hget(self, hash_name, key):
         """
@@ -286,7 +295,7 @@ class SSDBObject(object):
         :param key:
         :return:
         """
-        return self.__conn.hget(hash_name,key)
+        return self.__conn.hget(hash_name, key)
 
     # ################ kv operate #############
 
@@ -298,15 +307,15 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        next = self.__conn.scan(name_start=name_start, name_end='', limit=limit+1)
-        prev = self.__conn.rscan(name_start=name_start, name_end='', limit=limit+1)
-        item_dict = prev if tp == 'prev' else next
-        has_next = False if len(next) <= limit and tp == 'next' else True
-        has_prev = False if len(prev) <= limit and tp == 'prev' else True
+        next = self.__conn.execute_command('scan', name_start, '', limit + 1)
+        prev = self.__conn.execute_command('rscan', name_start, '', limit + 1)
+        items = prev if tp == 'prev' else next
+        has_next = False if len(next) / 2 <= limit and tp == 'next' else True
+        has_prev = False if len(prev) / 2 <= limit and tp == 'prev' else True
         if not tp:
-            has_next = False if len(next) <= limit else True
+            has_next = False if len(next) / 2 <= limit else True
             has_prev = False
-        item_list = [{'key': key, 'value': value} for key, value in item_dict.iteritems()]
+        item_list = [{'key': items[index], 'value': items[index + 1]} for index in range(0, len(items), 2)]
         if tp == 'prev':
             item_list = item_list[::-1]
         return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
@@ -334,10 +343,8 @@ class SSDBObject(object):
         :param keys:
         :return:
         """
-        return self.__conn.multi_del(*keys)
+        return self.__conn.execute_command('multi_del', *keys)
+
 
 if __name__ == '__main__':
-    s = SSDB(connection_pool=BlockingConnectionPool(host='42.123.99.64', port=int(8889)))
-    # print s.execute_command('info')[17]
-    import time
-    print s.ttl('test1')
+    pass

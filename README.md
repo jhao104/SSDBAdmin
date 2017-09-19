@@ -39,6 +39,10 @@ PORT = 5000  # server config
 
 ## Release notes
 
+* 0.2
+
+  * change ssdb driver; use python-redis.py replace ssdb-py。
+
 * 0.1
 
   * First release of SSDBAdmin;
