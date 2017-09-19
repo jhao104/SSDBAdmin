@@ -44,12 +44,12 @@ PORT = 5000  # server config
 
 * 0.2
 
-  * change ssdb driver; use python-redis.py replace ssdb-py。
+  * 使用redis.py模块代替ssdb-py模块，ssdb-py模块长期没有维护更新，许多新功能不支持。
 
 * 0.1
 
   * First release of SSDBAdmin;
-  * `List`/`Hashmap`/`Set`/`KeyValue` operate;
+  * `List`/`Hashmap`/`Set`/`KeyValue` 操作;
 
 ## Screenshots
 
