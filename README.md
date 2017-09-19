@@ -42,11 +42,11 @@ PORT = 5000  # server config
 
 ## Release notes
 
-* 0.2
+* 1.1
 
   * 使用redis.py模块代替ssdb-py模块，ssdb-py模块长期没有维护更新，许多新功能不支持。
 
-* 0.1
+* 1.0
 
   * First release of SSDBAdmin;
   * `List`/`Hashmap`/`Set`/`KeyValue` 操作;
