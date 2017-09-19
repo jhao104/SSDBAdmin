@@ -2,7 +2,7 @@
 
 db_config = [
     {
-        "host": "host1",
+        "host": "localhost",
         "port": 8889
     },
     {

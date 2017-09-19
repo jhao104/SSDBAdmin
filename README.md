@@ -40,6 +40,16 @@ PORT = 5000  # server config
 
 访问:http://127.0.0.1:5000/ssdbadmin
 
+## Release notes
+
+* 0.2
+
+  * change ssdb driver; use python-redis.py replace ssdb-py。
+
+* 0.1
+
+  * First release of SSDBAdmin;
+  * `List`/`Hashmap`/`Set`/`KeyValue` operate;
 
 ## Screenshots
 
