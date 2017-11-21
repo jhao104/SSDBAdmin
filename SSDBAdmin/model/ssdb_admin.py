@@ -105,7 +105,7 @@ class SSDBObject(object):
         :param limit:
         :return:
         """
-        return self.__conn.lrange(queue_name, int(offset), int(limit))
+        return self.__conn.lrange(queue_name, int(offset), int(offset) + int(limit))
 
     def queue_size(self, queue_name):
         """
