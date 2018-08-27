@@ -1,16 +1,16 @@
 <!-- 分页 -->
 <nav aria-label="Page navigation" class="center">
     <ul class="pagination">
-        <li {% if page_num == 1 %} class="disabled" {% endif %}><a href="?page_num=1&n={{ name }}" title="Fist Page"><span>|<</span></a></li>
-        <li {% if page_num == 1 %} class="disabled" {% endif %}><a href="?page_num={{ page_num-1 }}&n={{ name }}" title="Previous Page"><span><<</span></a></li>
+        <li {% if page_num == 1 %} class="disabled" {% endif %}><a href="?page_num=1&name={{ name }}" title="Fist Page"><span>|<</span></a></li>
+        <li {% if page_num == 1 %} class="disabled" {% endif %}><a href="?page_num={{ page_num-1 }}&name={{ name }}" title="Previous Page"><span><<</span></a></li>
         {% for page in [page_num-3, page_num-2, page_num-1, page_num, page_num + 1, page_num + 2, page_num + 3] %}
             {% if page >= 1 and page <= page_count %}
-            <li {% if page_num == page %} class="active" {% endif %}><a href="?page_num={{ page }}&n={{ name }}">{{ page }}</a></li>
+            <li {% if page_num == page %} class="active" {% endif %}><a href="?page_num={{ page }}&name={{ name }}">{{ page }}</a></li>
             {% endif %}
         {% endfor %}
 
-        <li {% if page_num == page_count %} class="disabled" {% endif %}><a href="?page_num={{ page_num + 1 }}&n={{ name }}" title="Next Page"><span>>></span></a></li>
-        <li {% if page_num == page_count %} class="disabled" {% endif %}><a href="?page_num={{ page_count }}&n={{ name }}" title="Last Page"><span>>|</span></a></li>
+        <li {% if page_num == page_count %} class="disabled" {% endif %}><a href="?page_num={{ page_num + 1 }}&name={{ name }}" title="Next Page"><span>>></span></a></li>
+        <li {% if page_num == page_count %} class="disabled" {% endif %}><a href="?page_num={{ page_count }}&name={{ name }}" title="Last Page"><span>>|</span></a></li>
         <li class="page_info">
             共{{ page_count }}页, {{ data_total }}条记录
         </li>

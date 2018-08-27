@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form action="{{ url_for('queue_qclear') }}" method="post" class="center">
+    <form action="{{ url_for('queueClear') }}" method="post" class="center">
     <h3>Clear Queue?</h3>
-        <input type="hidden" name="n" value="{{ name }}">
+        <input type="hidden" name="name" value="{{ name }}">
         <p style="font-weight: bold;">{{ name }}</p>
     <button type="submit" class="btn btn-sm btn-danger">Clear</button>
     <button type="button" class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</button>

@@ -2,18 +2,18 @@
 {% block content %}
     <h3>qrange: <code>{{ name }}</code></h3>
     <div class="pull-left">
-        <a class="btn btn-info btn-sm" href="{{ url_for('queue_qpush', n=name) }}">
+        <a class="btn btn-info btn-sm" href="{{ url_for('queuePush', name=name) }}">
             <span class="glyphicon glyphicon-plus"></span> Push
         </a>
-        <a class="btn btn-danger btn-sm" href="{{ url_for('queue_qpop', n=name) }}">
-            <span class="glyphicon glyphicon-plus"></span> Pop
+        <a class="btn btn-danger btn-sm" href="{{ url_for('queuePop', name=name) }}">
+            <span class="glyphicon glyphicon-minus"></span> Pop
         </a>
     </div>
 
     <div class="pull-right">
-        <form class="form-inline" action="{{ url_for('queue_qrange') }}">
+        <form class="form-inline" action="{{ url_for('queueRange') }}">
             <div class="form-group">
-                <input type="hidden" name="n" value="{{ name }}">
+                <input type="hidden" name="name" value="{{ name }}">
                 {% include 'select_size.html' %}
             </div>
             <button type="submit" class="btn btn-info btn-sm">Query</button>
@@ -33,10 +33,10 @@
         <tbody>
         {% for item in item_list %}
             <tr>
-                <td><a href="{{ url_for('queue_qget', n=name, i=start_index + loop.index0) }}">{{ start_index + loop.index0 }}</a></td>
+                <td><a href="{{ url_for('queueGet', name=name, index=start_index + loop.index0) }}">{{ start_index + loop.index0 }}</a></td>
                 <td>{{ item|safe|truncate(100, True) }}</td>
                 <td>{{ item|count }}</td>
-                <td><a href="{{ url_for('queue_qget', n=name, i=start_index + loop.index0) }}" title="View" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+                <td><a href="{{ url_for('queueGet', name=name, index=start_index + loop.index0) }}" title="View" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-eye-open"></span></a></td>
             </tr>
         {% endfor %}
         </tbody>

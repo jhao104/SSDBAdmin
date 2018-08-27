@@ -1,90 +1,100 @@
-#!/usr/bin/env python
-import sys
-
-
+# -*- coding: utf-8 -*-
+"""
+-------------------------------------------------
+   File Name：     queue
+   Description :   queue view
+   Author :        JHao
+   date：          2018/8/27
+-------------------------------------------------
+   Change Activity:
+                   2018/8/27: queue view
+-------------------------------------------------
+"""
+__author__ = 'JHao'
 
 from SSDBAdmin import app
+from SSDBAdmin.model.SSDBClient import SSDBClient
+from SSDBAdmin.utils.paginator import getPagingTabsInfo
 from flask import render_template, request, make_response, redirect, url_for
-
-from SSDBAdmin.model.ssdb_admin import SSDBObject
-from SSDBAdmin.util import get_paging_tabs_info
 
 
 @app.route('/ssdbadmin/queue/')
-def queue_lists():
+def queueLists():
     """
-    show the list of queue
+    show the items of queue/list
     :return:
     """
     page_num = int(request.args.get('page_num', 1))
     page_size = request.args.get('page_size')
     if not page_size:
-        page_size = request.cookies.get('SIZE', 20)
-    start = request.args.get('s', '')
-    end = request.args.get('e', '')
-    ssdb_object = SSDBObject(request)
-    queue_list, has_next = ssdb_object.queue_list(start=start, end=end, page_num=page_num, page_size=int(page_size))
-    select_arg = {'s': start, 'e': end, 'page_size': int(page_size)}
+        page_size = request.cookies.get('SIZE', 10)
+    start = request.args.get('start', '')
+    end = request.args.get('end', '')
+
+    db_client = SSDBClient(request)
+    queue_list, has_next = db_client.queueList(name_start=start, name_end=end, page_num=page_num,
+                                               page_size=int(page_size))
+    select_arg = {'start': start, 'end': end, 'page_size': int(page_size)}
     resp = make_response(render_template('queue/queue.html', queue_list=queue_list, has_next=has_next,
                                          has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='queue'))
+    resp.set_cookie("SIZE", page_size)
     return resp
 
 
-@app.route('/ssdbadmin/queue/qpush/', methods=['GET', 'POST'])
-def queue_qpush():
+@app.route('/ssdbadmin/queue/push/', methods=['GET', 'POST'])
+def queuePush():
     """
-    add item to queue(support back and front)
-    :return:
+    add item to queue(support back/front type)
+    Returns:
     """
     if request.method == 'GET':
-        queue_name = request.args.get('n')
-        return render_template('queue/queue_qpush.html', queue_name=queue_name, active='queue')
-    else:
+        queue_name = request.args.get('name')
+        return render_template('queue/queue_push.html', queue_name=queue_name, active='queue')
+    elif request.method == "POST":
         queue_name = request.form.get('queue_name')
         push_type = request.form.get('type')
         item = request.form.get('item')
-        ssdb_object = SSDBObject(request)
-        ssdb_object.queue_qpush(queue_name, item, push_type)
-        return redirect(url_for('queue_qrange', n=queue_name))
+        SSDBClient(request).queuePush(queue_name, item, push_type)
+        return redirect(url_for('queueRange', name=queue_name))
 
 
-@app.route('/ssdbadmin/queue/qpop/', methods=['GET', 'POST'])
-def queue_qpop():
+@app.route('/ssdbadmin/queue/pop/', methods=['GET', 'POST'])
+def queuePop():
     """
-    pop item(s) from queue (support back and front)
+    pop item(s) from queue (support back/front type)
     :return:
     """
     if request.method == 'GET':
-        queue_name = request.args.get('n')
-        return render_template('queue/queue_qpop.html', queue_name=queue_name, active='queue')
+        queue_name = request.args.get('name')
+        return render_template('queue/queue_pop.html', queue_name=queue_name, active='queue')
     else:
-        queue_name = request.form.get('n')
-        pop_type = request.form.get('t')
-        number = request.form.get('num')
-        ssdb_object = SSDBObject(request)
-        ssdb_object.queue_qpop(queue_name, number, pop_type)
-        return redirect(url_for('queue_qrange', n=queue_name))
+        queue_name = request.form.get('name')
+        pop_type = request.form.get('type')
+        number = request.form.get('number')
+        SSDBClient(request).queuePop(queue_name, number, pop_type)
+        return redirect(url_for('queueRange', name=queue_name))
 
 
-@app.route('/ssdbadmin/queue/qrange/')
-def queue_qrange():
+@app.route('/ssdbadmin/queue/range/')
+def queueRange():
     """
     show the list of item from queue
     :return:
     """
-    queue_name = request.args.get('n')
+    queue_name = request.args.get('name')
     page_num = request.args.get('page_num', 1)
     page_size = request.args.get('page_size')
     if not page_size:
-        page_size = request.cookies.get('SIZE', 20)
-    ssdb_object = SSDBObject(request)
-    item_total = ssdb_object.queue_size(queue_name)
-    page_count, page_num = get_paging_tabs_info(item_total, page_num, page_size)
+        page_size = request.cookies.get('SIZE', 10)
+
+    db_object = SSDBClient(request)
+    item_total = db_object.queueSize(queue_name)
+    page_count, page_num = getPagingTabsInfo(item_total, page_num, page_size)
     offset = (page_num - 1) * int(page_size)
-    item_list = ssdb_object.queue_qrange(queue_name, offset=offset, limit=page_size)
+    item_list = db_object.queueRange(queue_name, offset=offset, limit=page_size)
     select_arg = {'page_size': int(page_size)}
-    resp = make_response(render_template('queue/queue_qrange.html',
+    resp = make_response(render_template('queue/queue_range.html',
                                          item_list=item_list,
                                          name=queue_name,
                                          page_num=int(page_num),
@@ -93,34 +103,32 @@ def queue_qrange():
                                          start_index=offset,
                                          data_total=item_total,
                                          active='queue'))
-    resp.set_cookie('SIZE', str(page_size))
+    resp.set_cookie('SIZE', page_size)
     return resp
 
 
-@app.route('/ssdbadmin/queue/qget/')
-def queue_qget():
+@app.route('/ssdbadmin/queue/get/')
+def queueGet():
     """
     show an item info from queue
     :return:
     """
-    queue_name = request.args.get('n')
-    index = request.args.get('i')
-    ssdb_object = SSDBObject(request)
-    item = ssdb_object.queue_qget(queue_name, index)
-    return render_template('queue/queue_qget.html', name=queue_name, item=item, index=index, active='queue')
+    queue_name = request.args.get('name')
+    index = request.args.get('index')
+    item = SSDBClient(request).queueGet(queue_name, index)
+    return render_template('queue/queueGet.html', name=queue_name, item=item, index=index, active='queue')
 
 
-@app.route('/ssdbadmin/queue/qclear/', methods=['GET', 'POST'])
-def queue_qclear():
+@app.route('/ssdbadmin/queue/clear/', methods=['GET', 'POST'])
+def queueClear():
     """
-    delete  the specified queue data
+    delete the specified queue
     :return:
     """
     if request.method == 'POST':
-        queue_name = request.form.get('n')
-        ssdb_object = SSDBObject(request)
-        ssdb_object.queue_qclear(queue_name)
-        return redirect(url_for('queue_lists'))
+        queue_name = request.form.get('name')
+        SSDBClient(request).queueClear(queue_name)
+        return redirect(url_for('queueLists'))
     else:
-        queue_name = request.args.get('n')
-        return render_template('queue/queue_qclear.html', name=queue_name, active='queue')
+        queue_name = request.args.get('name')
+        return render_template('queue/queue_clear.html', name=queue_name, active='queue')

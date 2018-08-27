@@ -4,15 +4,15 @@ DB_CONFIG = [
         "port": 8888
     },
     {
-        "host": "localhost",
-        "port": 8888
+        "host": "118.24.52.95",
+        "port": 8899
     }
 ]
 
 SERVICE_CONFIG = {
     "host": "0.0.0.0",
     "port": 5000,
-    "debug": False
+    "debug": True
 }
 
 

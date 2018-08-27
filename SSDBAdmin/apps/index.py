@@ -2,12 +2,12 @@
 """
 -------------------------------------------------
    File Name：     index
-   Description :
+   Description :   index view
    Author :        JHao
    date：          2018/8/24
 -------------------------------------------------
    Change Activity:
-                   2018/8/24:
+                   2018/8/24: index view
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -23,9 +23,9 @@ def internal_error(error):
     return render_template('500.html', error=error)
 
 
-@app.errorhandler(404)
-def not_found_error(error):
-    return redirect(url_for('index'))
+# @app.errorhandler(404)
+# def not_found_error(error):
+#     return redirect(url_for('index'))
 
 
 @app.route('/ssdbadmin/')
