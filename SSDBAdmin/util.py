@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
 # 进一法求分页的总数
 def get_paging_tabs_total(total_count, per_page_count):
     return (total_count + per_page_count - 1) / per_page_count
@@ -18,5 +14,6 @@ def get_paging_tabs_info(data_count, page_no, page_row_num=20):
     page_num = correct_paging_tabs_index(page_count, int(page_no))
     return page_count, page_num
 
+
 if __name__ == '__main__':
-    print get_paging_tabs_info(10, 3, 5)
+    print(get_paging_tabs_info(10, 3, 5))
