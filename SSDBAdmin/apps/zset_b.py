@@ -1,41 +1,35 @@
-# -*- coding: utf-8 -*-
-"""
--------------------------------------------------
-   File Name：     zset
-   Description :   zset view
-   Author :        JHao
-   date：          2018/8/30
--------------------------------------------------
-   Change Activity:
-                   2018/8/30: zset view
--------------------------------------------------
-"""
-__author__ = 'JHao'
+#!/usr/bin/env python
+import sys
+
+
 
 from SSDBAdmin import app
-from SSDBAdmin.model.SSDBClient import SSDBClient
-from SSDBAdmin.utils.paginator import getPagingTabsInfo
 from flask import render_template, request, make_response, redirect, url_for
+
+from SSDBAdmin.model.ssdb_admin import SSDBObject
+
+
+# from SSDBAdmin.util import get_paging_tabs_info
 
 
 @app.route('/ssdbadmin/zset/')
-def zsetLists():
+def zset_lists():
     """
-    show the items of zset
+    show the list of zset
     :return:
     """
     page_num = int(request.args.get('page_num', 1))
     page_size = request.args.get('page_size')
     if not page_size:
         page_size = request.cookies.get('SIZE', 20)
-    start = request.args.get('start', '')
-    db_client = SSDBClient(request)
-    zset_list, has_next = db_client.zsetList(start=start, page_num=page_num, page_size=int(page_size))
-    select_arg = {'start': start, 'page_size': int(page_size)}
+    start = request.args.get('s', '')
+    ssdb_object = SSDBObject(request)
+    zset_list, has_next = ssdb_object.zset_list(start=start, page_num=page_num, page_size=int(page_size))
+    select_arg = {'s': start, 'page_size': int(page_size)}
     resp = make_response(render_template('zset/zset.html', zset_list=zset_list, has_next=has_next,
                                          has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='zset'))
-    resp.set_cookie('SIZE', str(page_size))
+    resp.set_cookie('SIZE', page_size)
     return resp
 
 
@@ -45,7 +39,22 @@ def zset_zset():
     add item to queue(support back and front)
     :return:
     """
-    pass
+    if request.method == 'GET':
+        name = request.args.get('n')
+        key = request.args.get('k', '')
+        score = request.args.get('s', '')
+        return render_template('zset/zset_zset.html', name=name, key=key, score=score, active='zset')
+    else:
+        name = request.form.get('n')
+        key = request.form.get('k')
+        score = request.form.get('s')
+        try:
+            score = int(score)
+        except ValueError:
+            score = 0
+        ssdb_object = SSDBObject(request)
+        ssdb_object.zset_zset(name, key, score)
+        return redirect(url_for('zset_zscan', n=name))
 
 
 @app.route('/ssdbadmin/zset/zscan/')
@@ -54,9 +63,9 @@ def zset_zscan():
     show the list of item from queue
     :return:
     """
-    name = request.args.get('name')
-    key_start = request.args.get('start', '')
-    tp = request.args.get('type')
+    name = request.args.get('n')
+    key_start = request.args.get('s', '')
+    tp = request.args.get('t')
     page_size = request.args.get('page_size')
     if not page_size:
         page_size = request.cookies.get('SIZE', 20)
@@ -86,7 +95,19 @@ def zset_zdel():
     remove keys from zset_name
     :return:
     """
-    pass
+    if request.method == 'GET':
+        name = request.args.get('n')
+        key = request.args.get('k')
+        keys = request.args.getlist('keys')
+        if key:
+            keys.append(key)
+        return render_template('zset/zset_zdel.html', keys=keys, name=name, active='zset')
+    else:
+        keys = request.form.getlist('k')
+        name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.zset_del(name, *keys)
+        return redirect(url_for('zset_zscan', n=name))
 
 
 @app.route('/ssdbadmin/zset/zclear/', methods=['GET', 'POST'])
@@ -95,7 +116,14 @@ def zset_zclear():
     delete  the specified zset data
     :return:
     """
-    pass
+    if request.method == 'POST':
+        name = request.form.get('n')
+        ssdb_object = SSDBObject(request)
+        ssdb_object.zset_zclear(name)
+        return redirect(url_for('zsetLists'))
+    else:
+        queue_name = request.args.get('n')
+        return render_template('zset/zset_zclear.html', name=queue_name, active='zset')
 
 
 @app.route('/ssdbadmin/zset/zget/')
@@ -104,4 +132,8 @@ def zset_zget():
     show an item info from zset
     :return:
     """
-    pass
+    name = request.args.get('n')
+    key = request.args.get('k')
+    ssdb_object = SSDBObject(request)
+    score = ssdb_object.zset_zget(name, key)
+    return render_template('zset/zset_zget.html', name=name, score=score, key=key, active='zset')
