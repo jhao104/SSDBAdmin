@@ -30,5 +30,24 @@ def getPagingTabsInfo(data_count, page_no, page_row_num=20):
     return page_count, page_num
 
 
+# 计算页码
+def getPageNumberInfo(data_index, page_count, per_page_num):
+    """
+    计算数据位于的页码
+    Args:
+        data_index: 数据位置索引
+        page_count: 总页码数
+        per_page_num: 每页数量
+    Returns:
+        页码(int)
+    """
+    page_index = (int(data_index) // int(per_page_num)) + 1
+    total_index = int(page_count) * int(per_page_num)
+    if int(data_index) == total_index:
+        return int(page_count)
+    return page_index if data_index <= total_index else 1
+
+
 if __name__ == '__main__':
-    print(getPagingTabsInfo(10, 5, 5))
+    print(getPagingTabsInfo(20, 7, 5))
+    print(getPageNumberInfo(121, 3, 10))

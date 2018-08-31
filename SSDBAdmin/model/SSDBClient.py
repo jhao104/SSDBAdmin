@@ -188,6 +188,47 @@ class SSDBClient(object):
                         name_list[(page_num - 1) * page_size: page_num * page_size - 1])
         return zset_list, has_next
 
+    def zsetSet(self, name, key, score):
+        """
+        Set `key` with `score` into zset which named `name`
+        Args:
+            name: zset name
+            key: key
+            score: score
+        Returns:
+            None
+        """
+        return self.__conn.execute_command('zset', name, key, score)
+
+    def zsetRange(self, zset_name, offset, limit):
+        """
+        Return a portion of item from the zset which named `zset_name`
+        at the specified range[`offset`, `offset` + `limit`]
+        Args:
+            zset_name: zset name
+            offset: offset
+            limit: limit
+        Returns:
+
+        """
+        start, end = int(offset), int(offset) + int(limit) - 1
+        items_list = self.__conn.execute_command("zrang", zset_name, start, end)
+        return []
+        # next_items = self.__conn.execute_command('zrange', zset_name, key, '', '', limit + 1)
+        # prev_items = self.__conn.execute_command('zrscan', zset_name, key, '', '', limit + 1)
+        # items = prev_items if tp == 'prev' else next_items
+        # if tp == "next":
+        #     has_prev = True
+        #     has_next = True if len(next_items) > limit else False
+        # else:
+        #     has_next = True
+        #     has_prev = True if len(prev_items) > limit else False
+        #
+        # item_list = [{'key': items[index], 'score': items[index + 1]} for index in range(0, len(items), 2)]
+        # if tp == 'prev':
+        #     item_list = item_list[::-1]
+        # return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
+
     # endregion zset operate
 
 

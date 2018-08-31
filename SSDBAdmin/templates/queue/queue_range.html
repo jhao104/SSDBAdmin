@@ -13,7 +13,9 @@
     <div class="pull-right">
         <form class="form-inline" action="{{ url_for('queueRange') }}">
             <div class="form-group">
-                <input type="hidden" name="name" value="{{ name }}">
+                <label for="start">Start</label>
+                <input type="text" name="start" id="start" value="{{ start }}" class="form-control" placeholder="index">
+                <input type="hidden" name="name" value="{{ name }}" >
                 {% include 'select_size.html' %}
             </div>
             <button type="submit" class="btn btn-info btn-sm">Query</button>

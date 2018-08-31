@@ -14,7 +14,7 @@ __author__ = 'JHao'
 
 from SSDBAdmin import app
 from SSDBAdmin.model.SSDBClient import SSDBClient
-from SSDBAdmin.utils.paginator import getPagingTabsInfo
+from SSDBAdmin.utils.paginator import getPagingTabsInfo, getPageNumberInfo
 from flask import render_template, request, make_response, redirect, url_for
 
 
@@ -83,6 +83,7 @@ def queueRange():
     :return:
     """
     queue_name = request.args.get('name')
+    start = request.args.get('start')
     page_num = request.args.get('page_num', 1)
     page_size = request.args.get('page_size')
     if not page_size:
@@ -92,6 +93,12 @@ def queueRange():
     item_total = db_object.queueSize(queue_name)
     page_count, page_num = getPagingTabsInfo(item_total, page_num, page_size)
     offset = (page_num - 1) * int(page_size)
+    if start and start.isdigit():
+        page_num = getPageNumberInfo(int(start), page_count, page_size)
+        offset = (page_num - 1) * int(page_size)
+    else:
+        start = offset
+
     item_list = db_object.queueRange(queue_name, offset=offset, limit=page_size)
     select_arg = {'page_size': int(page_size)}
     resp = make_response(render_template('queue/queue_range.html',
@@ -101,6 +108,7 @@ def queueRange():
                                          page_count=page_count,
                                          select_arg=select_arg,
                                          start_index=offset,
+                                         start=start,
                                          data_total=item_total,
                                          active='queue'))
     resp.set_cookie('SIZE', page_size)
