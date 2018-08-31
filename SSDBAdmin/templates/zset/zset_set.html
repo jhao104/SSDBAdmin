@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <h3>Add or Update ZSET type record</h3>
-    <form action="{{ url_for('zset_zset') }}" class="center" method="post">
+    <form action="{{ url_for('zsetSet') }}" class="center" method="post">
         <table class="table table-striped">
             <thead>
             <tr class="info">
@@ -12,13 +12,13 @@
             </thead>
             <tbody>
             <tr>
-                <td><input type="text" name="n" class="form-control"
+                <td><input type="text" name="name" class="form-control"
                         {% if name %}
                            value="{{ name }}" readonly
                         {% endif %}
                            required></td>
-                <td><input type="text" name="k" class="form-control" value="{{ key }}"></td>
-                <td><input type="text" name="s" class="form-control" value="{{ score }}"></td>
+                <td><input type="text" name="key" class="form-control" value="{{ key }}"></td>
+                <td><input type="text" name="score" class="form-control" value="{{ score }}"></td>
             </tr>
             </tbody>
         </table>

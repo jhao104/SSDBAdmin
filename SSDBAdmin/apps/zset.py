@@ -14,7 +14,7 @@ __author__ = 'JHao'
 
 from SSDBAdmin import app
 from SSDBAdmin.model.SSDBClient import SSDBClient
-from SSDBAdmin.utils.paginator import getPagingTabsInfo
+from SSDBAdmin.utils.paginator import getPagingTabsInfo, getPageNumberInfo
 from flask import render_template, request, make_response, redirect, url_for
 
 
@@ -40,43 +40,62 @@ def zsetLists():
 
 
 @app.route('/ssdbadmin/zset/zset/', methods=['GET', 'POST'])
-def zset_zset():
+def zsetSet():
     """
-    add item to queue(support back and front)
+    add item to zset
     :return:
     """
-    pass
+    if request.method == 'GET':
+        name = request.args.get('name')
+        key = request.args.get('key', '')
+        score = request.args.get('score', '')
+        return render_template('zset/zset_set.html', name=name, key=key, score=score, active='zset')
+    else:
+        name = request.form.get('name')
+        key = request.form.get('key')
+        score = request.form.get('score')
+        try:
+            score = int(score)
+        except ValueError:
+            score = 0
+        SSDBClient(request).zsetSet(name, key, score)
+        return redirect(url_for('zsetRange', name=name))
 
 
-@app.route('/ssdbadmin/zset/zscan/')
-def zset_zscan():
+@app.route('/ssdbadmin/zset/range/')
+def zsetRange():
     """
-    show the list of item from queue
+    show the list of item from zst
     :return:
     """
-    name = request.args.get('name')
-    key_start = request.args.get('start', '')
-    tp = request.args.get('type')
+    set_name = request.args.get('name')
+    start = request.args.get('start', "")
+    page_num = request.args.get('page_num', 1)
     page_size = request.args.get('page_size')
     if not page_size:
-        page_size = request.cookies.get('SIZE', 20)
-    ssdb_object = SSDBObject(request)
-    has_next, has_prev, item_list = ssdb_object.zset_zscan(name, key_start, tp, limit=int(page_size))
-    prev_s, next_s = '', ''
-    if item_list:
-        next_s = item_list[-1].get('key')
-        prev_s = item_list[0].get('key')
-    select_arg = {'page_size': int(page_size), 'prev_s': prev_s, 'next_s': next_s}
-    resp = make_response(render_template('zset/zset_zscan.html',
+        page_size = request.cookies.get('SIZE', 10)
+
+    db_object = SSDBClient(request)
+    item_total = db_object.zsetSize(set_name)
+    page_count, page_num = getPagingTabsInfo(item_total, page_num, page_size)
+    offset = (page_num - 1) * int(page_size)
+    if start:
+        rank = db_object.zsetRank(set_name, start)
+        if rank:
+            page_num = getPageNumberInfo(rank, page_count, page_size)
+            offset = (page_num - 1) * int(page_size)
+
+    item_list = db_object.zsetRange(set_name, offset=offset, limit=page_size)
+    select_arg = {'page_size': int(page_size)}
+    resp = make_response(render_template('zset/zset_range.html',
                                          item_list=item_list,
-                                         name=name,
-                                         page_num=1,
-                                         key_start=key_start,
-                                         has_next=has_next,
-                                         has_prev=has_prev,
+                                         name=set_name,
+                                         page_num=int(page_num),
+                                         page_count=page_count,
                                          select_arg=select_arg,
+                                         start=start,
                                          active='zset'))
-    resp.set_cookie('SIZE', str(page_size))
+    resp.set_cookie('SIZE', page_size)
     return resp
 
 

@@ -212,22 +212,30 @@ class SSDBClient(object):
 
         """
         start, end = int(offset), int(offset) + int(limit) - 1
-        items_list = self.__conn.execute_command("zrang", zset_name, start, end)
-        return []
-        # next_items = self.__conn.execute_command('zrange', zset_name, key, '', '', limit + 1)
-        # prev_items = self.__conn.execute_command('zrscan', zset_name, key, '', '', limit + 1)
-        # items = prev_items if tp == 'prev' else next_items
-        # if tp == "next":
-        #     has_prev = True
-        #     has_next = True if len(next_items) > limit else False
-        # else:
-        #     has_next = True
-        #     has_prev = True if len(prev_items) > limit else False
-        #
-        # item_list = [{'key': items[index], 'score': items[index + 1]} for index in range(0, len(items), 2)]
-        # if tp == 'prev':
-        #     item_list = item_list[::-1]
-        # return has_next, has_prev, item_list[:-1] if len(item_list) > limit else item_list
+        key_list = self.__conn.zrange(zset_name, start, end)
+        key_list = [_.decode() for _ in key_list if isinstance(_, bytes)]
+        return [{"key": _, "score": int(self.__conn.zscore(zset_name, _))} for _ in key_list]
+
+    def zsetRank(self, zset_name, key):
+        """
+        Returns a 0-based value indicating the rank of ``value`` in sorted set
+        Args:
+            zset_name: zset name
+            key: key
+        Returns:
+
+        """
+        return self.__conn.zrank(zset_name, key)
+
+    def zsetSize(self, zset_name):
+        """
+        the size of zst
+        Args:
+            zset_name: zset name
+        Returns:
+            size(int)
+        """
+        return self.__conn.zcard(zset_name)
 
     # endregion zset operate
 
@@ -246,4 +254,4 @@ if __name__ == '__main__':
     request = R()
     db = SSDBClient(request)
     for i in range(30):
-        db.queuePush(0, i, 'back')
+        db.zsetSet("1", i, 1)
