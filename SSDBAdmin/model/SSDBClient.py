@@ -200,6 +200,15 @@ class SSDBClient(object):
         """
         return self.__conn.execute_command('zset', name, key, score)
 
+    def zsetGet(self, zset_name, key):
+        """
+        Return the score of element ``key`` in zset_name
+        :param zset_name:
+        :param key:
+        :return:
+        """
+        return self.__conn.zscore(zset_name, key)
+
     def zsetRange(self, zset_name, offset, limit):
         """
         Return a portion of item from the zset which named `zset_name`
@@ -226,6 +235,25 @@ class SSDBClient(object):
 
         """
         return self.__conn.zrank(zset_name, key)
+
+    def zsetDel(self, zset_name, *keys):
+        """
+        Delete specified multiple keys of zset which named `zset_name`.
+        Args:
+            zset_name: zset name
+            *keys: will del keys
+        Returns:
+            None
+        """
+        return self.__conn.execute_command('multi_zdel', zset_name, *keys)
+
+    def zsetClear(self, zset_name):
+        """
+        **Clear&Delete** the zset named `zset_name` specified by `zset_name`
+        :param zset_name: zset name
+        :return:
+        """
+        return self.__conn.execute_command('zclear', zset_name)
 
     def zsetSize(self, zset_name):
         """
@@ -254,4 +282,4 @@ if __name__ == '__main__':
     request = R()
     db = SSDBClient(request)
     for i in range(30):
-        db.zsetSet("1", i, 1)
+        db.zsetSet(i, i, 1)

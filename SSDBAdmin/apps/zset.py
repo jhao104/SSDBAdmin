@@ -39,7 +39,7 @@ def zsetLists():
     return resp
 
 
-@app.route('/ssdbadmin/zset/zset/', methods=['GET', 'POST'])
+@app.route('/ssdbadmin/zset/set/', methods=['GET', 'POST'])
 def zsetSet():
     """
     add item to zset
@@ -99,28 +99,48 @@ def zsetRange():
     return resp
 
 
-@app.route('/ssdbadmin/zset/zdel/', methods=['GET', 'POST'])
-def zset_zdel():
+@app.route('/ssdbadmin/zset/del/', methods=['GET', 'POST'])
+def zsetDel():
     """
-    remove keys from zset_name
+    remove keys from zset
     :return:
     """
-    pass
+    if request.method == 'GET':
+        name = request.args.get('name')
+        key = request.args.get('key')
+        keys = request.args.getlist('keys')
+        if key:
+            keys.append(key)
+        return render_template('zset/zset_del.html', keys=keys, name=name, active='zset')
+    else:
+        keys = request.form.getlist('key')
+        name = request.form.get('name')
+        SSDBClient(request).zsetDel(name, *keys)
+        return redirect(url_for('zsetRange', name=name))
 
 
 @app.route('/ssdbadmin/zset/zclear/', methods=['GET', 'POST'])
-def zset_zclear():
+def zsetClear():
     """
     delete  the specified zset data
     :return:
     """
-    pass
+    if request.method == 'POST':
+        name = request.form.get('name')
+        SSDBClient(request).zsetClear(name)
+        return redirect(url_for('zsetLists'))
+    else:
+        queue_name = request.args.get('name')
+        return render_template('zset/zset_clear.html', name=queue_name, active='zset')
 
 
 @app.route('/ssdbadmin/zset/zget/')
 def zset_zget():
     """
-    show an item info from zset
+    show item info from zset
     :return:
     """
-    pass
+    name = request.args.get('name')
+    key = request.args.get('key')
+    score = SSDBClient(request).zsetGet(name, key)
+    return render_template('zset/zset_get.html', name=name, score=score, key=key, active='zset')
