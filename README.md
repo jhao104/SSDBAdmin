@@ -1,7 +1,7 @@
 SSDBAdmin
 =======
 [![Build Status](https://travis-ci.org/jhao104/SSDBAdmin.svg?branch=master)](https://travis-ci.org/jhao104/SSDBAdmin)
-![py27](https://camo.githubusercontent.com/392a32588691a8418368a51ff33a12d41f11f0a9/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f707974686f6e2d322e372d6666363962342e737667) 
+![py3](https://img.shields.io/badge/python-3.x-green.svg) 
 [![Requirements Status](https://requires.io/github/jhao104/SSDBAdmin/requirements.svg?branch=master)](https://requires.io/github/jhao104/SSDBAdmin/requirements/?branch=master)
 [![](https://img.shields.io/badge/Powered%20by-@j_hao104-blue.svg)](http://www.spiderpy.cn/blog/)
 
@@ -9,11 +9,11 @@ SSDB数据库的可视化界面管理工具
 
 
 ## 功能
-    提供SSDB数据的hash/zset/kv/queue等数据结构的增删改查等功能
+    提供SSDB数据的hash/zset/kv/queue等数据结构的增删改查等功能 
 
 ## 依赖
 
-* Python 2.x
+* Python 3.x  (Python2请移步[py2](https://github.com/jhao104/SSDBAdmin/tree/dev_py2))
 
 * Flask
 
@@ -24,11 +24,23 @@ SSDB数据库的可视化界面管理工具
 编辑配置文件`SSDBAdmin/setting.py`:
 ```
 # SSDB config
-db_config = [
-    {"host": "127.0.0.1",
-     "port": 8888},
-   ]
-PORT = 5000  # server config
+DB_CONFIG = [
+    {
+        "host": "127.0.0.1",
+        "port": 8888
+    },
+    {
+        "host": "127.0.0.1",
+        "port": 8899
+    }
+]
+
+# service config
+SERVICE_CONFIG = {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": True
+}
 ```
 将`host`和`port`修改成正确值。
 
@@ -36,12 +48,20 @@ PORT = 5000  # server config
 ```pip install -r requirements.txt```
 
 启动:
-```python runserver.py```
+```python run.py```
 
 访问:http://127.0.0.1:5000/ssdbadmin
 
 ## Release notes
 
+* 3.0.0
+  
+  * 使用python3版本,不再支持python2。 python2用户请使用2.0.0及以下版本。
+
+* 2.0.0
+  
+  * python2版本分割。  
+  
 * 1.1
 
   * 使用redis.py模块代替ssdb-py模块，ssdb-py模块长期没有维护更新，许多新功能不支持。
