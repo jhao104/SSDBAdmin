@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form action="{{ url_for('hash_hdel') }}" method="post" class="center">
+    <form action="{{ url_for('hashDel') }}" method="post" class="center">
         <h3>Remove 2 key(s) in <code>{{ name }}</code>?</h3>
-        <input type="hidden" name="n" value="{{ name }}">
+        <input type="hidden" name="name" value="{{ name }}">
         {% for key in keys %}
-            <input type="hidden" name="k" value="{{ key }}">
+            <input type="hidden" name="key" value="{{ key }}">
             <p style="font-weight: bold;">{{ key }}</p>
         {% endfor %}
         <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-        <button class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</button>
+        <a class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</a>
     </form>
 {% endblock %}

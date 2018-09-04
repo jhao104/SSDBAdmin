@@ -2,20 +2,20 @@
 {% block content %}
     <h3>hscan:<a><code>{{ name }}</code></a></h3>
     <div class="pull-left">
-        <a class="btn btn-info btn-sm" href="{{ url_for('hash_hset', n=name) }}">
+        <a class="btn btn-info btn-sm" href="{{ url_for('hashSet', name=name) }}">
             <span class="glyphicon glyphicon-plus"></span> Add
         </a>
     </div>
 
     <div class="pull-right">
-        <form class="form-inline" action="{{ url_for('hash_hscan') }}">
+        <form class="form-inline" action="{{ url_for('hashScan') }}">
             <div class="form-group">
                 <label for="start_name">Start key</label>
-                <input type="text" class="form-control" id="start_name" name="s" value="{{ key_start }}" placeholder="start key">
+                <input type="text" class="form-control" id="start_name" name="start" value="{{ key_start }}" placeholder="start key">
             </div>
             <div class="form-group">
-                <input type="hidden" name="n" value="{{ name }}">
-                <input type="hidden" name="t" value="next">
+                <input type="hidden" name="name" value="{{ name }}">
+                <input type="hidden" name="type" value="next">
                 {% include 'select_size.html' %}
             </div>
             <button type="submit" class="btn btn-info btn-sm">Query</button>
@@ -23,8 +23,8 @@
     </div>
 
     <div class="clear"></div>
-    <form action="{{ url_for('hash_hdel') }}" method="get">
-        <input type="hidden" name="n" value="{{ name }}">
+    <form action="{{ url_for('hashDel') }}" method="get">
+        <input type="hidden" name="name" value="{{ name }}">
     <table class="table table-striped table-hover" id="data_list">
         <thead>
         <tr class="info">
@@ -39,12 +39,12 @@
         {% for item in item_list %}
             <tr>
                 <td><input type="checkbox" value="{{ item.key }}" name="keys" class="cb"></td>
-                <td><a href="{{ url_for('hash_hget', k=item.key, n=name) }}">{{ item.key }}</a></td>
+                <td><a href="{{ url_for('hashGet', key=item.key, name=name) }}">{{ item.key }}</a></td>
                 <td>{{ item.value }}</td>
                 <td>{{ item.value|count }}</td>
                 <td>
-                    <a href="{{ url_for('hash_hset', n=name, k=item.key, v=item.value) }}" class="btn btn-xs btn-info" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
-                    <a href="{{ url_for('hash_hdel', n=name, k=item.key) }}" class="btn btn-xs btn-danger" title="Remove"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a href="{{ url_for('hashSet', name=name, key=item.key, value=item.value) }}" class="btn btn-xs btn-info" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <a href="{{ url_for('hashDel', name=name, key=item.key) }}" class="btn btn-xs btn-danger" title="Remove"><span class="glyphicon glyphicon-remove"></span></a>
                 </td>
             </tr>
         {% endfor %}

@@ -267,6 +267,99 @@ class SSDBClient(object):
 
     # endregion zset operate
 
+    # region hash operate
+    def hashList(self, name_start, name_end, page_num, page_size):
+        """
+        return hash_map items in range(`name_start`, `name_end`)
+        Args:
+            name_start: The lower bound(not included) of keys to be returned, empty string ``''`` means -inf
+            name_end: The upper bound(included) of keys to be returned, empty string ``''`` means +inf
+            page_num: page number
+            page_size: items size per page
+        Returns:
+            items list
+        """
+        limit = (page_num + 1) * page_size
+        items_list = [_.decode() for _ in self.__conn.execute_command('hlist', name_start, name_end, limit)]
+        page_count, page_num = getPagingTabsInfo(data_count=len(items_list), page_no=page_num, page_row_num=page_size)
+        has_next = True if page_count > page_num else False
+        hash_list = map(lambda hash_name: {'name': hash_name, 'size': self.__conn.hlen(hash_name)},
+                        items_list[(page_num - 1) * page_size: page_num * page_size])
+        return hash_list, has_next
+
+    def hashScan(self, hash_name, key_start, key_end, limit):
+        """
+        List key-value pairs of a hashmap with keys in range (key_start, key_end].
+        Args:
+            hash_name: hash name
+            key_start: start key
+            key_end: end key
+            limit: limit
+        Returns:
+            list of hash item
+        """
+        item_list = self.__conn.execute_command('hscan', hash_name, key_start, key_end, limit)
+        item_list = [_.decode() for _ in item_list if isinstance(_, bytes)]
+        hash_list = [{'key': item_list[index], 'value': item_list[index + 1]} for index in range(0, len(item_list), 2)]
+        return hash_list
+
+    def hashSet(self, hash_name, key, value):
+        """
+        Set ``key`` to ``value`` within hash ``hash_name``
+        Args:
+            hash_name: hash name
+            key: key
+            value: value
+        Returns:
+            None
+        """
+        self.__conn.hset(hash_name, key, value)
+
+    def hashGet(self, hash_name, key):
+        """
+        Return the value of ``key`` within the hash ``hash_name``
+        Args:
+            hash_name: hash name
+            key: key
+        Returns:
+            hash value(str)
+        """
+        value = self.__conn.hget(hash_name, key)
+        return value.decode() if isinstance(value, bytes) else value
+
+    def hashDel(self, hash_name, *keys):
+        """
+        "Delete ``keys`` from hash ``hash_name``"
+        Args:
+            hash_name: hash name
+            *keys: keys
+        Returns:
+            None
+        """
+        return self.__conn.execute_command('multi_hdel', hash_name, *keys)
+
+    def hashClear(self, hash_name):
+        """
+        **Clear&Delete** the hash specified by `hash_name`
+        Args:
+            hash_name: hash name
+        Returns:
+            None
+        """
+        self.__conn.execute_command('hclear', hash_name)
+
+    def hashSize(self, hash_name):
+        """
+        the hash of zst
+        Args:
+            hash_name: hash name
+        Returns:
+
+            size(int)
+        """
+        return self.__conn.hlen(hash_name)
+    # endregion hash operate
+
 
 if __name__ == '__main__':
     class R(object):
@@ -282,4 +375,4 @@ if __name__ == '__main__':
     request = R()
     db = SSDBClient(request)
     for i in range(30):
-        db.zsetSet(i, i, 1)
+        db.hashSet(0, i, 1)
