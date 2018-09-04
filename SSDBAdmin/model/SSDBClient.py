@@ -358,21 +358,73 @@ class SSDBClient(object):
             size(int)
         """
         return self.__conn.hlen(hash_name)
+
     # endregion hash operate
+
+    # region kv operate
+    def kvScan(self, key_start, key_end, limit):
+        """
+        List key-value pairs of a kv with keys in range (key_start, key_end].
+        Args:
+            key_start: start key
+            key_end: end key
+            limit: limit
+        Returns:
+            list of hash item
+        """
+        item_list = self.__conn.execute_command('scan', key_start, key_end, limit)
+        item_list = [_.decode() for _ in item_list if isinstance(_, bytes)]
+        hash_list = [{'key': item_list[index], 'value': item_list[index + 1]} for index in range(0, len(item_list), 2)]
+        return hash_list
+
+    def kvGet(self, key):
+        """
+        Return the value at key ``key``, or ``None`` if the key doesn't exist
+        and the number of seconds until the key ``name`` will expire
+        Args:
+            key: key
+        Returns:
+            key's value and ttl sec
+        """
+        value = self.__conn.get(key)
+        value = value.decode() if isinstance(value, bytes) else value
+        ttl = self.__conn.execute_command('ttl', key)
+        return value, ttl
+
+    def kvSet(self, key, value):
+        """
+        Set the value of the key
+        Args:
+            key: key
+            value: value
+        Returns:
+            None
+        """
+        self.__conn.execute_command('set', key, value)
+
+    def kvDel(self, *keys):
+        """
+        Delete one or more keys specified by ``keys``
+        Args:
+            *keys: keys
+        Returns:
+            None
+        """
+        self.__conn.execute_command('multi_del', *keys)
+
+    # endregion kv operate
 
 
 if __name__ == '__main__':
     class R(object):
         @property
         def args(self):
-            return {"SSDBADMIN_SERVER": "118.24.52.95:8899"}
+            return {"SSDBADMIN_SERVER": "127.0.0.1:8080"}
 
         @property
         def cookies(self):
-            return {"SSDBADMIN_SERVER": "118.24.52.95:8899"}
+            return {"SSDBADMIN_SERVER": "127.0.0.1:8080"}
 
 
     request = R()
     db = SSDBClient(request)
-    for i in range(30):
-        db.hashSet(0, i, 1)
