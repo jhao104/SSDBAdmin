@@ -1,15 +1,15 @@
 {% extends 'index.html' %}
 {% block content %}
     <h3>qpop: <code>{{ queue_name }}</code></h3>
-    <form class="form-inline center" action="{{ url_for('queue_qpop') }}" method="post">
-        <input type="hidden" name="n" value="{{ queue_name }}">
+    <form class="form-inline center" action="{{ url_for('queuePop') }}" method="post">
+        <input type="hidden" name="name" value="{{ queue_name }}">
         <div class="form-group">
             <label for="queue_name">Pop</label>
-            <input type="text" class="form-control" id="queue_name" name="num" value="1" size="1">
+            <input type="text" class="form-control" id="queue_name" name="number" value="1" size="1">
         </div>
         <div class="form-group">
             <label for="type">Item(s) from at</label>
-            <select name="t" id="type" class="form-control">
+            <select name="type" id="type" class="form-control">
                 <option value="back">Back</option>
                 <option value="front">Front</option>
             </select>

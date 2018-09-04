@@ -1,13 +1,13 @@
 {% extends 'index.html' %}
 {% block content %}
     <h3> Add List type record</h3>
-    <form action="{{ url_for('queue_qpush') }}" method="post">
+    <form action="{{ url_for('queuePush') }}" method="post">
         <table class="table table-striped">
             <thead>
             <tr class="info">
-                <th width="40%">Queue name</th>
+                <th width="30%">Queue name</th>
                 <th width="10%">Location</th>
-                <th width="50%">Item</th>
+                <th width="60%">Item</th>
             </tr>
             </thead>
             <tbody>
@@ -18,7 +18,7 @@
                            {% endif %}
                            required></td>
                 <td>
-                    <select name="type">
+                    <select name="type" class="form-control">
                         <option value="back">Back</option>
                         <option value="front">Front</option>
                     </select>
@@ -28,7 +28,7 @@
             </tbody>
         </table>
         <div class="center">
-            <button type="submit" class="btn btn-sm btn-primary">Save &nbsp;</button>
+            <button type="submit" class="btn btn-sm btn-primary">Save</button>
             <button class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</button>
         </div>
 

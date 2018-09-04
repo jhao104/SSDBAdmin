@@ -1,5 +1,6 @@
 <label for="size">Size</label>
 <select name="page_size" id="size" class="form-control">
+    <option value="10" {% if select_arg.page_size == 10 %} selected{% endif %}> 10</option>
     <option value="20" {% if select_arg.page_size == 20 %} selected{% endif %}> 20</option>
     <option value="50" {% if select_arg.page_size == 50 %} selected{% endif %}> 50</option>
     <option value="100" {% if select_arg.page_size == 100 %} selected{% endif %}> 100</option>

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form action="{{ url_for('zsetClear') }}" method="post" class="center">
+    <h3>Clear Zset?</h3>
+        <input type="hidden" name="name" value="{{ name }}">
+        <p style="font-weight: bold;">{{ name }}</p>
+    <button type="submit" class="btn btn-sm btn-danger">Clear</button>
+    <a type="button" class="btn btn-sm btn-default" onclick="history.go(-1)">Cancel</a>
+    </form>
+
+{% endblock %}
