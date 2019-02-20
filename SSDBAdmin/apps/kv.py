@@ -90,5 +90,6 @@ def kvDel():
         return render_template('kv/kv_del.html', keys=keys, active='kv')
     else:
         keys = request.form.getlist('key')
-        SSDBClient(request).kvDel(*keys)
+        if keys:
+            SSDBClient(request).kvDel(*keys)
         return redirect(url_for('kvScan'))
