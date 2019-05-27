@@ -48,7 +48,7 @@ class SSDBClient(object):
         Returns:
             info message as dict
         """
-        info_list = [_.decode() for _ in self.__conn.execute_command('info')]
+        info_list = [_.decode() if isinstance(_, bytes) else _ for _ in self.__conn.execute_command('info')]
         version = info_list[2]
         links = info_list[4]
         total_calls = info_list[6]
