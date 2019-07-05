@@ -181,7 +181,7 @@ class SSDBClient(object):
             items list
         """
         limit = (page_num + 1) * page_size
-        name_list = [_.decode() for _ in self.__conn.execute_command('zlist', start, '', limit)]
+        name_list = [_.decode("utf8", "ignore") for _ in self.__conn.execute_command('zlist', start, '', limit)]
         page_count, page_num = getPagingTabsInfo(data_count=len(name_list), page_no=page_num, page_row_num=page_size)
         has_next = True if page_count > page_num else False
         zset_list = map(lambda zset_name: {'name': zset_name, 'size': self.__conn.zcard(zset_name)},

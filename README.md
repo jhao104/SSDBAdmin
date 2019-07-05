@@ -52,6 +52,15 @@ SERVICE_CONFIG = {
 
 访问:http://127.0.0.1:5000/ssdbadmin
 
+## Docker
+
+```bash
+$ docker pull jhao104/ssdb-admin
+
+$ docker run --env DB_CONFIG=127.0.0.1:8888 -p 5000:5000 jhao104/ssdb-admin
+
+```
+
 ## Release notes
 
 * 3.0.0
