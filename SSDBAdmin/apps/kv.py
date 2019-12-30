@@ -45,7 +45,7 @@ def kvScan():
                                          has_prev=page_number > 1,
                                          select_arg=select_arg,
                                          active='kv'))
-    resp.set_cookie('SIZE', str(page_size))
+    resp.set_cookie('SIZE', str(page_size),secure=True, httponly=True, samesite='Lax')
     return resp
 
 

@@ -37,7 +37,7 @@ def hashLists():
     resp = make_response(render_template('hash/hash.html', hash_list=hash_list, has_next=has_next,
                                          has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='hash'))
-    resp.set_cookie("SIZE", str(page_size))
+    resp.set_cookie("SIZE", str(page_size), secure=True, httponly=True, samesite='Lax')
     return resp
 
 
@@ -72,7 +72,7 @@ def hashScan():
                                          has_prev=page_number > 1,
                                          select_arg=select_arg,
                                          active='hash'))
-    resp.set_cookie('SIZE', str(page_size))
+    resp.set_cookie('SIZE', str(page_size), secure=True, httponly=True, samesite='Lax')
     return resp
 
 

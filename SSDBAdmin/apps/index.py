@@ -33,7 +33,7 @@ def index():
     host, port = getSAServer(request)
     server_info = SSDBClient(request).serverInfo()
     resp = make_response(render_template('index.html', server_info=server_info))
-    resp.set_cookie('SSDBADMINSERVER', '{host}:{port}'.format(host=host, port=port))
+    resp.set_cookie('SSDBADMINSERVER', '{host}:{port}'.format(host=host, port=port),secure=True, httponly=True, samesite='Lax')
     return resp
 
 
