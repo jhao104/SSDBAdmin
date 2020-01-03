@@ -35,7 +35,7 @@ def zsetLists():
     resp = make_response(render_template('zset/zset.html', zset_list=zset_list, has_next=has_next,
                                          has_prev=page_num > 1,
                                          page_num=page_num, select_arg=select_arg, active='zset'))
-    resp.set_cookie('SIZE', str(page_size),secure=True, httponly=True, samesite='Lax')
+    resp.set_cookie('SIZE', str(page_size), httponly=True, samesite='Lax')
     return resp
 
 
@@ -95,7 +95,7 @@ def zsetRange():
                                          select_arg=select_arg,
                                          start=start,
                                          active='zset'))
-    resp.set_cookie('SIZE', page_size,secure=True, httponly=True, samesite='Lax')
+    resp.set_cookie('SIZE', str(page_size), httponly=True, samesite='Lax')
     return resp
 
 
